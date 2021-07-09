@@ -75,7 +75,7 @@ function getUserType($conn, $data) {
     $user = getUser($conn, $data["token"]);
     if ($user) {
         $__data["success"] = true;
-        $__data["username"] = $user[getkey("type")];
+        $__data["type"] = $user[getkey("type")];
     }
     return $__data;
 }
@@ -94,74 +94,4 @@ function getUserInfo($conn, $data) {
     }
     return $__data;
 }
-
-/*function login($conn, $data) {
-    $_data = array(
-        "success" => false
-    );
-    $login = $data["login"];
-    $password = $data["password"];
-    if ($data["login"] != "" and $data["password"] != "") {
-        if ($login != str_replace(" ", "", $data["login"]) or $password != str_replace(" ", "", $data["password"])) {
-            $_data["message"] = "Логин или пароль не должны содержать пробелы";
-        } else {
-            $users = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `users` WHERE `login` = \"{$data["login"]}\""));
-            if (count($users) == 0) {
-                $_data["success"] = false;
-                $_data["message"] = "Логин или пароль введены неверно";
-            }
-            else {
-                foreach($users as $user){
-                    $token = where("token");
-                    if (password_verify($data["password"], $user[4])) {
-                        $_data["success"] = true;
-                        $_data["token"] = $user[1];
-                    }
-                    else {
-                        $_data["success"] = false;
-                        $_data["message"] = "Логин или пароль введены неверно";
-                    }
-                };
-            }
-        }
-
-    } else {
-        $_data["message"] = "Логин или пароль введены неверно";
-    }
-    return $_data;
-}
-
-function isUser($conn, $data) {
-    $_data = array(
-        "success" => false
-    );
-    $users = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `users` WHERE `token` = \"{$data["token"]}\""));
-    if (count($users) == 0) {
-        $_data["success"] = false;
-    }
-    else {
-        $_data["success"] = true;
-    }
-    return $_data;
-}
-
-function getUser($conn, $data) {
-    $_data = array(
-        "success" => false
-    );
-    $users = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `users` WHERE `token` = \"{$data["token"]}\""));
-    if (count($users) == 0) {
-        $_data["success"] = false;
-        $_data["message"] = "Wrong token";
-    }
-    else {
-        $user = $users[0];
-        $_data["success"] = true;
-        $_data["data"] = array(
-            "name" => $user[2],
-            "login" => $user[3]
-        );
-    }
-    return $_data;
-}*/
 ?>

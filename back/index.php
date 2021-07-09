@@ -1,6 +1,7 @@
 <?php
 require_once 'connect.php';
 require_once 'users.php';
+require_once 'features.php';
 
 $res = array(
     "method" => $_POST["method"],
@@ -32,29 +33,4 @@ function sortingHat($conn, $r) {
 }
 
 echo json_encode(sortingHat($connect, $res));
-
-/*$data = array(
-    "login" => $_POST['login'],
-    "password" => $_POST['password']
-);
-$returnData = array(
-    "success" => false
-);
-$users = mysqli_fetch_all(mysqli_query($connect, "SELECT * FROM `users` WHERE `login` = \"{$data["login"]}\""));
-if (count($users) == 0) {
-    $returnData["success"] = false;
-    $returnData["message"] = "Логин или пароль введены неверно";
-}
-else {
-    foreach($users as $user){
-        if ($user[3] == $data["password"]) {
-            $returnData["success"] = true;
-        }
-        else {
-            $returnData["success"] = false;
-            $returnData["message"] = "Логин или пароль введены неверно";
-        }
-    };
-}
-echo json_encode($returnData);*/
 ?>

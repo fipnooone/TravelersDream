@@ -8,6 +8,7 @@ class LK extends Component {
         this.state = {
             username: "",
             type: "",
+            picture: "",
             blocks: []
         };
         this.box = React.createRef();
@@ -38,13 +39,14 @@ class LK extends Component {
         formData.append("method", "getUserInfo");
         formData.append("data", JSON.stringify({
             "token": JSON.parse(Cookies.get("data")).token,
-            "keys": ["name", "type"]
+            "keys": ["name", "type", "picture"]
         }));
         axios.post("http://dream", formData).then(res => {
             if (res.data.success) {
                 this.setState({
                     username: res.data.data.name,
                     type: res.data.data.type,
+                    picture: res.data.data.picture
                 });
             }
             else {
@@ -58,13 +60,14 @@ class LK extends Component {
     getEmployees() {
         let formData = new FormData();
         formData.append("method", "getEmployees");
+        formData.append("data", JSON.stringify({ "token": JSON.parse(Cookies.get("data")).token }));
         axios.post("http://dream", formData).then(res => {
             if (res.data.success) {
                 let __blocks = [];
                 res.data.users.map(user => {
                     __blocks.push(
                         <div className="not-enought">
-                            <img className="user-picture" src="https://i.imgur.com/dqc2q0w.png" alt="" />
+                            <img className="user-picture" src={user.picture} alt="" />
                             <div className="user-info-nt">
                                 <p className="user-name user-text">{user.name}</p>
                                 <p className="user-type user-text">{user.type}</p>
@@ -85,7 +88,7 @@ class LK extends Component {
                     <li id="UserHeader">
                         <div className="user-header-main" id="UserHeaderMain" ref={this.box} onClick={() => this.showMore() }>
                             <p className="user-name">{this.state.username}</p>
-                            <img className="user-picture" src="https://i.imgur.com/dqc2q0w.png" alt="" />
+                            <img className="user-picture" src={this.state.picture} alt="" />
                         </div>
                         <div className="user-header-more" id="UserHeaderMore">
                             <a className="button-profile" >Профиль</a>

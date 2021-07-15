@@ -1,23 +1,4 @@
 <?php
-function getkey($key) {
-    switch ($key){
-        case "id":
-            return 0;
-        case "token":
-            return 1;
-        case "name":
-            return 2;
-        case "login":
-            return 3;
-        case "password":
-            return 4;
-        case "type":
-            return 5;
-        default:
-            return false;
-    }
-}
-
 function getUsers($conn, $v) {
     $users = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `users` WHERE `login` = \"{$v}\""));
     if (count($users) == 0) return false;
@@ -89,7 +70,8 @@ function getUserInfo($conn, $data) {
     if ($user) {
         $__data["success"] = true;
         foreach ($data["keys"] as $key) {
-            if (getKey($key)) $__data["data"][$key] = $user[getKey($key)];
+            if ($key == "picture") $__data["data"][$key] = "http://dream/profilepictures/{$user[getkey("id")]}.png";
+            elseif (getKey($key)) $__data["data"][$key] = $user[getkey($key)];
         }
     }
     return $__data;

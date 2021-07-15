@@ -2,6 +2,7 @@
 require_once 'connect.php';
 require_once 'users.php';
 require_once 'features.php';
+require_once 'globals.php';
 
 $res = array(
     "method" => array_key_exists("method", $_POST) ? $_POST["method"] : false,
@@ -25,7 +26,7 @@ function sortingHat($conn, $r) {
         case "getUserInfo":
             return getUserInfo($conn, $r["data"]);
         case "getEmployees":
-            return getEmployees($conn);
+            return getEmployees($conn, $r["data"]);
         default:
             return array(
                 "success" => false,

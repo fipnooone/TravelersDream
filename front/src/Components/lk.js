@@ -7,10 +7,12 @@ class LK extends Component {
         super(props);
         this.state = {
             username: "",
-            type: ""
+            type: "",
+            blocks: []
         };
         this.box = React.createRef();
         this.getUserInfo();
+        this.getEmployees();
     };
     componentDidMount() { document.addEventListener('click', this.handleOutsideClick); }
     handleOutsideClick = (event) => {
@@ -53,14 +55,28 @@ class LK extends Component {
             this.logOut();
         });
     };
+    getEmployees() {
+        let formData = new FormData();
+        formData.append("method", "getEmployees");
+        axios.post("http://dream", formData).then(res => {
+            if (res.data.success) {
+                let __blocks = [];
+                res.data.users.map(user => {
+                    __blocks.push(
+                        <div className="not-enought">
+                            <img className="user-picture" src="https://i.imgur.com/dqc2q0w.png" alt="" />
+                            <div className="user-info-nt">
+                                <p className="user-name user-text">{user.name}</p>
+                                <p className="user-type user-text">{user.type}</p>
+                            </div>
+                        </div>
+                    );
+                });
+                this.setState({blocks: __blocks});
+            }
+        });
+    }
     render() {
-        const randInt =  Math.floor(Math.random() * 10 + 2);
-        let randomBlocks = [];
-        for (let i=0; i < randInt; i++) {
-            randomBlocks.push(
-                <div className="not-enought" />
-            );
-        }
         return (
         <>
             <header>
@@ -88,7 +104,7 @@ class LK extends Component {
                     </div>
                     <div className="list-of">
                         <p className="button-create"></p>
-                        {randomBlocks}
+                        {this.state.blocks}
                     </div>
                 </div>
             </div>

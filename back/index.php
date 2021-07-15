@@ -4,8 +4,8 @@ require_once 'users.php';
 require_once 'features.php';
 
 $res = array(
-    "method" => $_POST["method"],
-    "data" => json_decode($_POST["data"], true)
+    "method" => array_key_exists("method", $_POST) ? $_POST["method"] : false,
+    "data" => array_key_exists("data", $_POST) ? json_decode($_POST["data"], true) : array()
 );
 
 function sortingHat($conn, $r) {
@@ -24,6 +24,8 @@ function sortingHat($conn, $r) {
             return getUserType($conn, $r["data"]);
         case "getUserInfo":
             return getUserInfo($conn, $r["data"]);
+        case "getEmployees":
+            return getEmployees($conn);
         default:
             return array(
                 "success" => false,

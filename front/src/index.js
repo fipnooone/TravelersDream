@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ProtectedRoute from './Components/ProtectedRoute';
@@ -33,13 +33,7 @@ ReactDOM.render(
   </footer>
   </>, document.getElementsByTagName('body')[0]
 );
-/*
-<ul>
-      <li className="Org-Name Text">ООО "Мечта путешествнника"</li>
-      <li id="LogoFooter"><img src="Sources/images/logo-ru.png" alt=""/></li>
-      <li className="Sign Text"><a href="http://fipnoo.one" target="_blank" rel="noopener noreferrer">developed by fipnooone</a></li>
-    </ul>
-*/
+
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals

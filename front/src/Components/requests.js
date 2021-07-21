@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-async function request(method, data, onsuccess=function(){}, onfail=function(){}, onerr=function(){}) {
+async function request(method, data) {
     let formData = new FormData();
     formData.append("method", method);
     formData.append("data", JSON.stringify(data));

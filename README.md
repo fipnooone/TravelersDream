@@ -63,4 +63,26 @@ ReactJS+PHP
   | Name | Type | Description |
   | - | - | - |
   | success | bool |  |
-  | users | array | {id: int, name: string, type: int, picture: string} |
+  | data | json | users: {id: int, name: string, type: int, picture: string} |
+## • getTypes
+  ### Parameters
+  | Name | Type |
+  | - | - |
+  | token | string |
+  ### Returns
+  | Name | Type | Description |
+  | - | - | - |
+  | success | bool |  |
+  | data | json | types: [str] |
+# Frontend API
+## • request
+  ### Parameters
+  | Name | Type |
+  | - | - |
+  | method | string |
+  | data | json |
+  ### Returns
+  | Name | Type | Description |
+  | - | - | - |
+  | success | bool |  |
+  | data | json | {success: true, data: {}} or {success: false, error: true, err} |

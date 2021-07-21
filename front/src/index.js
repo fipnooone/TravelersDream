@@ -26,7 +26,7 @@ ReactDOM.render(
   <Auths />
   <footer>
     <div className="footer-block">
-      <p className="Org-Name text">ООО "Мечта путешествнника"</p>
+      <p className="Org-Name text">ООО "Мечта путешественника"</p>
       <img id="LogoFooter" src="Sources/images/logo-ru.png" alt=""/>
       <a className="Sign text" href="http://fipnoo.one" target="_blank" rel="noopener noreferrer">developed by fipnooone</a>
     </div>

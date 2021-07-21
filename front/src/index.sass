@@ -1,7 +1,7 @@
-$color-dark: #0e1118
-$color-light: #20232d
+$color-dark: #2c2c34 //#0e1118
+$color-light: #494850 //#20232d
 $color-blue-gray: #3e4350
-$color-gray: #b2b2b2
+$color-gray: #e2e2e2//#b2b2b2
 $gradient-main: linear-gradient( to right, #e877ae, #7c73f3 ) 100% 1%
 $gradient-dark: linear-gradient( to right, #151820, #20232D ) 100% 1%
 
@@ -23,6 +23,23 @@ $font-Montserrat-LightItalic: 'Montserrat-LightItalic'
         opacity: 0
     100%
         opacity: 1
+@keyframes showFromUp
+    0%
+        transform: translateY(-10px)
+        opacity: 0
+    100%
+        transform: translateY(0px)
+        opacity: 1
+        visibility: visible
+@keyframes hideToDown
+    0%
+        transform: translateY(0px)
+        visibility: visible
+        opacity: 1
+    100%
+        transform: translateY(10px)
+        opacity: 0
+        visibility: hidden
 /* Main Block-Start
 html, body 
     width: 100%
@@ -193,7 +210,7 @@ footer #LogoFooter
     outline: none
     transition: border-color 0.4s
     &:focus
-        border-color: $color-blue-gray
+        border-color: $color-gray
         border-width: 2px
     &::placeholder
         color: $color-gray
@@ -282,20 +299,20 @@ header #UserHeader .user-header-more a
     display: flex
     flex-direction: column
     margin-right: 36px
-#LK .control-panel .gr-list p
-    display: block
-    text-align: center
-    padding-top: 6px
-    width: 165px
-    height: 28px
-    border-radius: 15px
-    color: white
-    font-family: $font-Montserrat-Regular
-    font-size: 18px
-    margin: 5px 0
-    cursor: pointer
-    &:hover
-        background-color: $color-dark
+    & p
+        display: block
+        text-align: center
+        padding-top: 6px
+        width: 165px
+        height: 28px
+        border-radius: 15px
+        color: white
+        font-family: $font-Montserrat-Regular
+        font-size: 18px
+        margin: 5px 0
+        cursor: pointer
+        &:hover
+            background-color: $color-dark
 #LK .control-panel .list-of
     display: flex
     flex-direction: column
@@ -307,7 +324,21 @@ header #UserHeader .user-header-more a
     width: 165px
     height: 34px
     border-radius: 15px
-    background: $gradient-dark
+    background: $color-dark
+    color: white
+    font-family: $font-Montserrat-Regular
+    font-size: 18px
+    display: flex
+    align-items: center
+    justify-content: center
+    transition: 0.1s
+    cursor: pointer
+    &:hover
+        transform: translateY(-3px)
+        box-shadow: 0px 1px 0px $color-gray
+    &:active
+        transform: translateY(0)
+        box-shadow: 0 0
 #LK .control-panel .list-of .not-enought
     height: 70px
     width: 100%
@@ -316,23 +347,137 @@ header #UserHeader .user-header-more a
     margin: 8px 0
     display: flex
     flex-direction: row
-#LK .control-panel .list-of .not-enought .user-picture
-    height: 58px
-    width: 58px
-    border-radius: 40px
-    margin: 6px 0 6px 11px
-#LK .control-panel .list-of .not-enought .user-info-nt
-    margin-top: 14px
-#LK .control-panel .list-of .not-enought .user-text
-    color: white
-    margin: 0 0 0 45px
-    line-height: 20px
-#LK .control-panel .list-of .not-enought .user-name
-    font-family: $font-Montserrat-Medium
-    font-size: 22px
-#LK .control-panel .list-of .not-enought .user-type
-    font-family: $font-Montserrat-Regular
-    font-size: 20px
+    align-items: center
+    transition: transform 0.2s
+    cursor: pointer
+    &:hover
+        transform: scale(1.01)
+    & .user-picture
+        height: 58px
+        width: 58px
+        border-radius: 40px
+        margin-left: 11px
+    & .user-text
+        color: white
+        margin: 0 0 0 45px
+        line-height: 20px
+    & .user-name
+        font-family: $font-Montserrat-Medium
+        font-size: 22px
+    & .user-type
+        font-family: $font-Montserrat-Regular
+        font-size: 20px
+#LK .mib
+    position: fixed
+    left: 0
+    top: 0
+    width: 100%
+    height: 100%
+    background-color: rgba(0,0,0,0.3)
+    visibility: hidden
+    opacity: 0
+#LK .create-new
+    position: fixed
+    top: 290px
+    left: 31.25vw
+    width: 735px
+    height: 320px
+    background-color: $color-dark
+    border-radius: 15px
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4)
+    visibility: hidden
+    opacity: 0
+    & .title-block
+        margin: 10px 0 30px 15px
+        display: flex
+        flex-direction: row
+        & .title-name
+            color: $color-gray
+            font-family: $font-Montserrat-Medium
+            font-size: 18px
+            flex: auto
+            margin: 2px 0 0
+        & .title-close
+            float: right
+            width: 25px
+            height: 25px
+            flex: initial
+            margin-right: 10px
+            cursor: pointer
+            border-radius: 40px
+            transition: 0.1s
+            &:hover
+                background-color: $color-light
+    & .input-block
+        display: flex
+        flex-direction: row
+    & .button-save
+        float: right
+        height: 29px
+        background: $gradient-main
+        border-radius: 15px
+        border: none
+        outline: none
+        margin-top: 27px
+        width: 150px
+        color: $color-gray
+        font-family: $font-Montserrat-Medium
+        font-size: 18px
+        cursor: pointer
+        transition: 0.2s
+        &:hover
+            transform: translateY(-2px)
+            box-shadow: 0 1px 0 $color-gray
+        &:active
+            transform: translateY(0px)
+            box-shadow: 0 0 0
+#LK .create-new .input-block .text-input
+    flex: auto
+    margin: 0 45px 0 45px 
+    & .input-row
+        display: flex
+        flex-direction: row
+        align-items: center
+        margin: 15px 0 0 0
+    & p
+        color: $color-gray
+        font-family: $font-Montserrat-Regular
+        font-size: 16px
+        margin: 0
+        flex: initial
+    & input, select
+        height: 27px
+        flex: auto
+        border: 2px solid $color-light
+        border-radius: 15px
+        outline: none
+        background: none
+        margin-left: 15px
+        padding: 0 0 0 15px
+        color: $color-gray
+        font-family: $font-Montserrat-Regular
+        font-size: 16px
+        box-sizing: border-box
+    & select
+        cursor: pointer
+        & option
+            background-color: $color-light
+#LK .create-new .input-block .image-input-block
+    flex: auto
+    & .image-title
+        color: $color-gray
+        font-family: $font-Montserrat-Regular
+        font-size: 16px
+        margin: 15px 0 10px 0
+    & .image-input
+        max-width: 180px
+        max-height: 200px
+        border-radius: 15px
+        cursor: pointer
+        outline: none
+    & #fileInput
+        height: 0
+        display: none
 /* LK Block-End
 
 

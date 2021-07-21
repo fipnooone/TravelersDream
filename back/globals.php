@@ -1,6 +1,7 @@
 <?php
 $permissions = array( //0 - admin
-    "getEmployees" => array(0)
+    "getEmployees" => array(0),
+    "getTypes" => array(0)
 );
 function getkey($key) {
     switch ($key){

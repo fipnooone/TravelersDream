@@ -14,7 +14,9 @@ function getEmployees($conn, $data) {
     global $permissions;
     $__data = array(
         "success" => false,
-        "users" => array()
+        "data" => array(
+            "users" => array()
+        )
     );
     if (isAllowed($conn, $data["token"], $permissions["getEmployees"])) {
         $users = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `users`"));
@@ -27,13 +29,28 @@ function getEmployees($conn, $data) {
         }
         $__data["success"] = true;
         foreach ($users as $user) {
-            array_push($__data["users"], array(
+            array_push($__data["data"]["users"], array(
                 "id" => $user[getkey("id")],
                 "name" => $user[getkey("name")],
                 "type" => $__types[$user[getkey("type")] - 1]["type"],
                 "picture" => "http://dream/profilepictures/{$user[getkey("id")]}.png"
             ));
         }
+    }
+    return $__data;
+}
+function getTypes($conn, $data) {
+    global $permissions;
+    $__data = array(
+        "success" => false,
+        "data" => array(
+            "types" => array()
+        )
+    );
+    if (isAllowed($conn, $data["token"], $permissions["getTypes"])) {
+        $types = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `usertypes`"));
+        $__data["success"] = true;
+        foreach ($types as $type) { array_push($__data["data"]["types"], $type[1]); }
     }
     return $__data;
 }

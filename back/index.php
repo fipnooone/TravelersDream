@@ -29,6 +29,8 @@ function sortingHat($conn, $r) {
             return getEmployees($conn, $r["data"]);
         case "getTypes":
             return getTypes($conn, $r["data"]);
+        case "updateUserInfo":
+            return updateUserInfo($conn, $r["data"]);
         default:
             return array(
                 "success" => false,

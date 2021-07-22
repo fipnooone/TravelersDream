@@ -70,10 +70,41 @@ function getUserInfo($conn, $data) {
     if ($user) {
         $__data["success"] = true;
         foreach ($data["keys"] as $key) {
-            if ($key == "picture") $__data["data"][$key] = "http://dream/profilepictures/{$user[getkey("id")]}.png";
+            if ($key == "photo") $__data["data"][$key] = "http://dream/profilepictures/{$user[getkey("photo")]}";
             elseif (getKey($key)) $__data["data"][$key] = $user[getkey($key)];
         }
     }
+    return $__data;
+}
+
+//
+
+function updateUserInfo($conn, $data) {
+    global $permissions;
+    $__data = array(
+        "success" => false
+    );
+    $query = "";
+    if (isAllowed($conn, $data["token"], $permissions["updateUserInfo"])) {
+        $counter = 1;
+        $total = count($data["keys"]);
+        foreach ($data["keys"] as $key => $value) {
+            if ($key == "photo") {
+                $filenameIn  = $value;
+                $filenameOut = __DIR__ . './profilepictures/' . basename($value);
+
+                $contentOrFalseOnFailure = file_get_contents("{$filenameIn}");
+                $byteCountOrFalseOnFailure = file_put_contents("./profilepictures/test.png", $contentOrFalseOnFailure);
+            } else {
+                $query = $query."`{$key}` = '{$value}'".(($counter < $total) ? ", " : "");
+                $counter += 1;
+            }
+        }
+    }
+    //$__data["query"] = "UPDATE `users` SET {$query} WHERE `users`.`id` = {$data["id"]}";
+    if (mysqli_query($conn, "UPDATE `users` SET {$query} WHERE `users`.`id` = {$data["id"]}"))
+        $__data["success"] = true;
+    
     return $__data;
 }
 ?>

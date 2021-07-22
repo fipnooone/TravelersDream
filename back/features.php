@@ -32,8 +32,11 @@ function getEmployees($conn, $data) {
             array_push($__data["data"]["users"], array(
                 "id" => $user[getkey("id")],
                 "name" => $user[getkey("name")],
+                "fio" => $user[getkey("fio")],
+                "typeid" => $user[getkey("type")],
                 "type" => $__types[$user[getkey("type")] - 1]["type"],
-                "picture" => "http://dream/profilepictures/{$user[getkey("id")]}.png"
+                "bdate" => $user[getkey("bdate")],
+                "photo" => "http://dream/profilepictures/{$user[getkey("photo")]}"
             ));
         }
     }

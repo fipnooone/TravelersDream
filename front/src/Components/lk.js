@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import {request, getToken} from './requests';
+import {request, uploadFiles, getToken} from './requests';
 
 class LK extends Component {
     constructor(props) {
@@ -13,8 +13,9 @@ class LK extends Component {
             blocks: [],
             types: [],
             currentUser: {
+                action: "",
                 id: 0,
-                originalData: {}
+                originalData: {},
             }
         };
         this.box = React.createRef();
@@ -48,7 +49,10 @@ class LK extends Component {
                let __blocks = [];
                res.data.users.map(user => {
                    __blocks.push(
-                       <div className="not-enought" onClick={ () => this.showCreatePanel(user.name, user.id, user.name, user.fio, user.bdate, user.typeid - 1, user.photo) }>
+                       <div className="not-enought" onClick={ () => {
+                            this.showCreatePanel('update', user.id, user.name, user.fio, user.bdate, user.typeid - 1, user.photo);
+                            this.state.currentUser.action = "update";
+                        }}>
                            <img className="user-picture" src={user.photo} alt="" />
                            <div className="user-info-nt">
                                <p className="user-name user-text">{user.name}</p>
@@ -105,8 +109,9 @@ class LK extends Component {
         document.getElementById("LKMIB-CNew").style.visibility = "hidden";
         document.getElementById("LKMIB-CNew").style.opacity = "0";
     };
-    showCreatePanel(title, id=0, name="", fio="", bdate="", type=0, photo="http://dream/profilepictures/0.png") {
+    showCreatePanel(panelType, id=0, name="", fio="", bdate="", type=0, photo="http://dream/profilepictures/0.png") {
         this.setState({currentUser: {
+            action: panelType, 
             id: id,
             originalData: {
                 name: name,
@@ -116,7 +121,7 @@ class LK extends Component {
                 photo: photo
             }
         }});
-        document.getElementById("CNewTitle").textContent = title;
+        document.getElementById("CNewTitle").textContent = panelType === 'create' ? 'Создание' : name;
         document.getElementById("inputName").value = name;
         document.getElementById("inputFIO").value = fio;
         document.getElementById("inputBDate").value = bdate;
@@ -157,7 +162,10 @@ class LK extends Component {
                         <p>Агенты</p>
                     </div>
                     <div className="list-of">
-                        <p className="button-create" onClick={ () => this.showCreatePanel("Создание") }>Создать</p>
+                        <p className="button-create" onClick={ () => {
+                            this.showCreatePanel("create");
+                            this.state.currentUser.action = "create";
+                            }}>Создать</p>
                         {this.state.blocks}
                     </div>
                 </div>
@@ -196,29 +204,44 @@ class LK extends Component {
                             </div>
                             <button className="button-save" onClick={() => {
                                 let query = {};
-                                let originalData = this.state.currentUser.originalData;
                                 let currentData = {
                                     name: document.getElementById("inputName").value,
                                     fio: document.getElementById("inputFIO").value,
                                     bdate: document.getElementById("inputBDate").value,
-                                    type: document.getElementById("selectType").value,
-                                    photo: document.getElementById("imageInput").src
+                                    type: +document.getElementById("selectType").value + 1,
+                                    photo: this.state.currentUser.photo
                                 };
-                                Object.keys(originalData).map(key => {
-                                    if (currentData[key] != originalData[key]) query[key] = currentData[key]
-                                });
-                                request("updateUserInfo", {token: getToken(), id: this.state.currentUser.id, keys: query}).then( res => {
-                                    this.getUserInfo();
-                                    this.getEmployees();
-                                    this.getTypes();
-                                    this.showCreatePanel(currentData.name, currentData.id, currentData.name, currentData.fio, currentData.bdate, currentData.type, currentData.photo);
-                                });
+                                console.log(this.state.currentUser.action);
+                                if (this.state.currentUser.action == "update") {
+                                    let originalData = this.state.currentUser.originalData;
+                                    Object.keys(originalData).map(key => {
+                                        if (currentData[key] != originalData[key] && key !== "photo") query[key] = currentData[key];
+                                    });
+                                    uploadFiles("updateUserInfo", {token: getToken(), id: this.state.currentUser.id, keys: query}, [currentData.photo ? currentData.photo : undefined]).then( res => {
+                                        this.getUserInfo();
+                                        this.getEmployees();
+                                        this.getTypes();
+                                        this.showCreatePanel(currentData.name, currentData.id, currentData.name, currentData.fio, currentData.bdate, currentData.type - 1, this.state.currentUser.photo ? window.URL.createObjectURL(currentData.photo) : originalData.photo);
+                                    });
+                                } else if (this.state.currentUser.action == "create") {
+                                    let originalData = this.state.currentUser.originalData;
+                                    Object.keys(originalData).map(key => {
+                                        if (currentData[key] != originalData[key] && key !== "photo") query[key] = currentData[key];
+                                    });
+                                    uploadFiles("createUser", {token: getToken(), keys: query}, [currentData.photo ? currentData.photo : undefined]).then( res => {
+                                        this.getUserInfo();
+                                        this.getEmployees();
+                                        this.getTypes();
+                                        this.showCreatePanel(currentData.name, currentData.id, currentData.name, currentData.fio, currentData.bdate, currentData.type - 1, this.state.currentUser.photo ? window.URL.createObjectURL(currentData.photo) : originalData.photo);
+                                    });
+                                }
                             }}>Сохранить</button>
                         </div>
                         <div className="image-input-block">
                             <p className="image-title">Фото</p>
                             <input id="imageInput" className="image-input" type="image" onClick={ () => document.getElementById("fileInput").click() }/>
                             <input id="fileInput" type="file" accept="image/*" onChange={ (e) => {
+                                this.state.currentUser.photo = e.target.files[0];
                                 document.getElementById("imageInput").src = window.URL.createObjectURL(e.target.files[0]);
                             }} />
                         </div>

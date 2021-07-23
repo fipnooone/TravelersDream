@@ -11,6 +11,12 @@ function getUser($conn, $v) {
     else return $users[0];
 }
 
+function __getUserById($conn, $id) {
+    $users = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `users` WHERE `id` = \"{$id}\""));
+    if (count($users) == 0) return false;
+    else return $users[0];
+}
+
 function login($conn, $data) { // login and password
     $__data = array( "success" => false );
     $login = $data["login"];
@@ -77,33 +83,89 @@ function getUserInfo($conn, $data) {
     return $__data;
 }
 
+function __getUserInfoById($conn, $id, $keys) {
+    $__data = array();
+    $user = __getUserById($conn, $id);
+    if ($user) {
+        $__data["success"] = true;
+        foreach ($keys as $key) {
+            if (getKey($key)) $__data[$key] = $user[getkey($key)];
+        }
+    }
+    return $__data;
+}
+
 //
 
-function updateUserInfo($conn, $data) {
+function updateUserInfo($conn, $data, $files) {
     global $permissions;
     $__data = array(
         "success" => false
     );
+    if ($data["id"] == 0) return $__data;
     $query = "";
+    $udata = __getUserInfoById($conn, $data["id"], array('fio', 'photo'));
+    $fio = $udata['fio'];
+    $photo = $udata['photo'];
+    $randname = transliterate(str_replace(' ', '-', $fio)).'-'.generateRandomString(5);
+    $ext = preg_replace("/(.*)\/(?:)/", '', $files['files']['type'][0]);
     if (isAllowed($conn, $data["token"], $permissions["updateUserInfo"])) {
         $counter = 1;
         $total = count($data["keys"]);
         foreach ($data["keys"] as $key => $value) {
-            if ($key == "photo") {
-                $filenameIn  = $value;
-                $filenameOut = __DIR__ . './profilepictures/' . basename($value);
-
-                $contentOrFalseOnFailure = file_get_contents("{$filenameIn}");
-                $byteCountOrFalseOnFailure = file_put_contents("./profilepictures/test.png", $contentOrFalseOnFailure);
-            } else {
-                $query = $query."`{$key}` = '{$value}'".(($counter < $total) ? ", " : "");
-                $counter += 1;
-            }
+            $query = $query."`{$key}` = '{$value}'".(($counter < $total) ? ", " : "");
+            $counter += 1;
         }
+        if ($files) {
+            $query = $query . ($counter > 1 ? ", " : "") . "`photo` = '{$randname}.{$ext}'".(($counter < $total) ? ", " : "");
+            move_uploaded_file(
+                $files["files"]['tmp_name'][0], 
+                $_SERVER['DOCUMENT_ROOT'] . "/profilepictures/{$randname}.{$ext}"
+            );
+            unlink( $_SERVER['DOCUMENT_ROOT'] . "/profilepictures/{$photo}");
+            $counter += 1;
+        }
+        if ($query != "" and mysqli_query($conn, "UPDATE `users` SET {$query} WHERE `users`.`id` = {$data["id"]}"))
+            $__data["success"] = true;
     }
-    //$__data["query"] = "UPDATE `users` SET {$query} WHERE `users`.`id` = {$data["id"]}";
-    if (mysqli_query($conn, "UPDATE `users` SET {$query} WHERE `users`.`id` = {$data["id"]}"))
-        $__data["success"] = true;
+    
+    return $__data;
+}
+
+function createUser($conn, $data, $files) {
+    global $permissions;
+    $__data = array(
+        "success" => false
+    );
+    $query = array(
+        'name' => NULL,
+        'fio' => NULL,
+        'type' => NULL,
+        'bdate' => NULL,
+        'photo' => NULL
+    );
+    $keys = $data["keys"];
+    $randname = transliterate(str_replace(' ', '-', $keys["fio"])).'-'.generateRandomString(5);
+    $ext = preg_replace("/(.*)\/(?:)/", '', $files['files']['type'][0]);
+    if (isAllowed($conn, $data["token"], $permissions["createUser"])) {
+        $counter = 1;
+        $total = count($keys);
+        foreach ($keys as $key => $value) {
+            $query[$key] = $value;
+        }
+        if (array_key_exists("files", $files)) {
+            $query['photo'] = "{$randname}.{$ext}";
+            move_uploaded_file(
+                $files["files"]['tmp_name'][0], 
+                $_SERVER['DOCUMENT_ROOT'] . "/profilepictures/{$randname}.{$ext}"
+            );
+        } else {
+            $query['photo'] = '0.png';
+        }
+        //$query["token"] = password_hash($query["login"], PASSWORD_BCRYPT); 
+        if ($query != "" and mysqli_query($conn, "INSERT INTO `users`(`name`, `fio`, `type`, `bdate`, `photo`) VALUES (\"{$query['name']}\", \"{$query['fio']}\", \"{$query['type']}\", \"{$query['bdate']}\", \"{$query['photo']}\")"))
+            $__data["success"] = true;
+    }
     
     return $__data;
 }

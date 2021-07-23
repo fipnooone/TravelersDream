@@ -6,7 +6,8 @@ require_once 'globals.php';
 
 $res = array(
     "method" => array_key_exists("method", $_POST) ? $_POST["method"] : false,
-    "data" => array_key_exists("data", $_POST) ? json_decode($_POST["data"], true) : array()
+    "data" => array_key_exists("data", $_POST) ? json_decode($_POST["data"], true) : array(),
+    "files" => $_FILES ? $_FILES : array()
 );
 
 function sortingHat($conn, $r) {
@@ -30,7 +31,9 @@ function sortingHat($conn, $r) {
         case "getTypes":
             return getTypes($conn, $r["data"]);
         case "updateUserInfo":
-            return updateUserInfo($conn, $r["data"]);
+            return updateUserInfo($conn, $r["data"], $r["files"]);
+        case "createUser":
+            return createUser($conn, $r["data"], $r["files"]);
         default:
             return array(
                 "success" => false,

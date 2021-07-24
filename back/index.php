@@ -14,6 +14,8 @@ function sortingHat($conn, $r) {
     switch ($r["method"]) {
         case "login":
             return login($conn, $r["data"]);
+        case "register":
+            return register($conn, $r["data"]);
         case "getUser":
             return getUser($conn, $r["data"]);
         case "getUsers":
@@ -34,6 +36,8 @@ function sortingHat($conn, $r) {
             return updateUserInfo($conn, $r["data"], $r["files"]);
         case "createUser":
             return createUser($conn, $r["data"], $r["files"]);
+        case "isNewUserByFio":
+            return isNewUserByFio($conn, $r["data"]);
         default:
             return array(
                 "success" => false,

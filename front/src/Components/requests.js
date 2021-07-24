@@ -7,10 +7,10 @@ async function request(method, data) {
     formData.append("data", JSON.stringify(data));
     return await axios.post("http://dream", formData).then(res => {
         if (res.data.success) {
-            return {success: true, data: res.data.data}
+            return {success: true, data: res.data}
         }
         else {
-            return {success: false, data: res.data.data}
+            return {success: false, data: res.data}
         }
     })
     .catch(err => {
@@ -43,3 +43,4 @@ function getToken() {
 }
 
 export {request, uploadFiles, getToken};
+//import {request, uploadFiles, getToken} from './requests';

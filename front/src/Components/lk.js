@@ -31,9 +31,9 @@ class LK extends Component {
         }).then(res => {
             if (res.success && !res.error) {
                 this.setState({
-                    username: res.data.name,
-                    type: res.data.type,
-                    picture: res.data.photo
+                    username: res.data.data.name,
+                    type: res.data.data.type,
+                    picture: res.data.data.photo
                 });
             }
             else {
@@ -47,7 +47,7 @@ class LK extends Component {
        }).then(res => {
            if (res.success && !res.error) {
                let __blocks = [];
-               res.data.users.map(user => {
+               res.data.data.users.map(user => {
                    __blocks.push(
                        <div className="not-enought" onClick={ () => {
                             this.showCreatePanel('update', user.id, user.name, user.fio, user.bdate, user.typeid - 1, user.photo);
@@ -72,14 +72,14 @@ class LK extends Component {
             if (res.success && !res.error) {
                 let __types= [];
                 let counter = 0;
-                res.data.types.map(type => {
+                res.data.data.types.map(type => {
                     __types.push(<option value={counter}>{type}</option>);
                     counter += 1;
                 });
                 this.setState({types: __types});
             }
             else {
-                this.logOut();
+                //this.logOut();
             }
         });
     }

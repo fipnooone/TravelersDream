@@ -16,6 +16,18 @@ function __getUserById($conn, $id) {
     if (count($users) == 0) return false;
     else return $users[0];
 }
+function __getUserByFio($conn, $fio) {
+    $users = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `users` WHERE `fio` = \"{$fio}\""));
+    if (count($users) == 0) return false;
+    else return $users[0];
+}
+
+function isNewUserByFio($conn, $data) {
+    $__data = array( "success" => false );
+    $user = __getUserByFio($conn, $data["fio"]);
+    if ($user) $__data["success"] = true;
+    return $__data;
+}
 
 function login($conn, $data) { // login and password
     $__data = array( "success" => false );
@@ -37,6 +49,33 @@ function login($conn, $data) { // login and password
         }
     }
     if (!$__data["success"]) $__data["message"] = "Логин или пароль введены неверно";
+    return $__data;
+}
+
+function register($conn, $data) { // fio, login and password
+    $__data = array( "success" => false );
+    $login = $data["login"];
+    $password = $data["password"];
+    if ($data["login"] != "" and $data["password"] != "") {
+        if ($login != str_replace(" ", "", $login) or $password != str_replace(" ", "", $password)) {
+            $__data["message"] = "Логин и пароль не должны содержать пробелы";
+        } else {
+            $user = __getUserByFio($conn, $data["fio"]);
+            $newpassword = password_hash($password, PASSWORD_BCRYPT);
+            $token = password_hash($login, PASSWORD_BCRYPT);
+            if ($user) {
+                if ($user[(getkey('token'))] == NULL){
+                    if (mysqli_query($conn, "UPDATE `users` SET `token` = \"{$token}\", `login` = \"{$login}\", `password` = \"{$newpassword}\" WHERE `users`.`id` = \"{$user[getkey("id")]}\""))
+                        {$__data["success"] = true;
+                        $__data["token"] = $token;}
+                    else
+                        $__data["message"] = "Произошла ошибка";
+                } else $__data["message"] = "Пользователь уже существует";
+            } else {
+                $__data["message"] = "Такого пользователя не существует";
+            }
+        }
+    }
     return $__data;
 }
 

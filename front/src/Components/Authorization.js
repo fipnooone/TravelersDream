@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import {request, uploadFiles, getToken} from './requests';
 
 class Authorization extends Component {
     constructor(props) {
@@ -8,7 +9,10 @@ class Authorization extends Component {
         this.state = {
             auth: false,
             loginText: "",
-            currAction: true
+            currAction: true,
+            regData: {
+                name: ""
+            }
         };
     };
     changeText = (text) => { this.setState({ loginText: text }) };
@@ -52,6 +56,78 @@ class Authorization extends Component {
             });
         }
     };
+    handleRegister = async e => { // на костылях
+        e.preventDefault();
+        let data = {
+            fio: document.getElementById("Name").value,
+            login: document.getElementById("Login").value,
+            password: document.getElementById("Password").value
+        }
+        if (data.fio != '' && (data.login == '' || data.password == '')) {
+            this.setState({regData: {name: data.fio}});
+            request("isNewUserByFio", {fio: data.fio}).then(res => {
+                if (res.success) {
+                    document.getElementById("Name").style.display = "none";
+                    document.getElementById("Login").style.display = "block";
+                    document.getElementById("Password").style.display = "block";
+                }
+            });
+        } else if (data.login !== '' && data.password !== '') {
+            request("register", {fio: this.state.regData.name, login: data.login, password: data.password}).then(res => {
+                if (res.success) {
+                    this.setAuth(true);
+                    Cookies.set("data", JSON.stringify({
+                        token: res.data.token
+                    }),{
+                        expires: new Date(new Date().getTime() + 15778476000)
+                    });
+                    (this.props.history || this.props.props.history).push({
+                        pathname: '/lk',
+                        state: {
+                            auth: this.state.auth
+                        }
+                    });
+                } else {
+                    this.changeText(res.data.message);
+                    document.getElementById("Name").style.display = "block";
+                    document.getElementById("Login").style.display = "none";
+                    document.getElementById("Password").style.display = "none";
+                }
+            });
+        }
+        /*if ((data.login !== "") && (data.password !== "") && (data.login.length <= 255) && (data.password.length  <= 255)) {
+            let formData = new FormData();
+            formData.append("method", "login");
+            formData.append("data", JSON.stringify({
+                "login": data.login,
+                "password": data.password
+            }));
+            axios.post("http://dream", formData)
+            .then(res => {
+                if (res.data.success) {
+                    this.changeText("");
+                    this.setAuth(true);
+                    Cookies.set("data", JSON.stringify({
+                        token: res.data.token
+                    }),{
+                        expires: new Date(new Date().getTime() + 15778476000)
+                    });
+                    (this.props.history || this.props.props.history).push({
+                        pathname: '/lk',
+                        state: {
+                            auth: this.state.auth
+                        }
+                    });
+                }
+                else {
+                    this.changeText(res.data.message);
+                }
+            })
+            .catch(err => {
+                this.changeText("Произошла ошибка при подключении к серверу");
+            });
+        }*/
+    };
     render() {
         let authBlock;
         if (this.state.currAction) {
@@ -63,11 +139,11 @@ class Authorization extends Component {
             </div>
         } else {
             authBlock =
-            <div className="login-data">
+            <div id="regBlock" className="login-data">
                 <input id="Name" type="text" placeholder="ФИО" maxLength="255"></input>
                 <input id="Login" type="email" placeholder="Логин" maxLength="255"></input>
                 <input id="Password" type="password" placeholder="Пароль" maxLength="255"></input>
-                <button>Далее</button>
+                <button onClick={ this.handleRegister}>Далее</button>
             </div>
         }
         return (

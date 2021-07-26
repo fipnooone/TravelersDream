@@ -1,88 +1,66 @@
 # TravelersDream
 ReactJS+PHP
+
+# Инструкция
+Прежде всего нужно установить NodeJS для запуска frontend'a: https://nodejs.org/en/
+
+Для работы backend'a был использован OpenServer: https://ospanel.io/
+
+• Настройки OpenServer/Modules
+```
+HTTP: Apache_2.4-PHP_8.0+Nginx_1.21
+PHP: PHP_8.0
+MySQL: MySQL-8.0
+```
+## Frontend:
+• Для запуска в режиме разработчика:
+```bash
+cd /front
+npm start
+```
+Сайт будет доступен по адресу: http://localhost:3000/
+
+• Для запуска оптимизированной build версии:
+```bash
+cd /front
+npm install -g serve
+serve -s build
+```
+Сайт будет доступен по адресу: http://localhost:5000/
+
+## Backend:
+PhpMyAdmin:
+```
+Login: root
+Password:
+```
+Содержимое папок back, database находятся по пути:
+```
+/back - /OpenServer/domains/dream
+/database - /OpenServer/userdata/MySQL-8.0
+```
+
+# О сайте
+В данный момент работает авторизация, регистрация, добавление и изменение пользователей. Нет адаптивности под мобильные устройства.
+
+Данные для входа:
+```
+Login: testuser@test.ru
+Password: testuserpassword
+```
+
+Для прохождения регистрации пользователь должен быть добавлен администратором, далее пользователь на странице регистрации вводит свое ФИО и, если он действительно находится в базе новых пользователей, вводит логин и пароль для своего аккаунта.
+
 # Preview
-![](https://i.imgur.com/jHmc8K9.png)
-# Backend API
-## • login
-  ### Parameters
-  | Name | Type |
-  | - | - |
-  | login | string |
-  | password | string |
-  ### Returns
-  | Name | Type |
-  | - | - |
-  | success | bool |
-  | data | json |
-## • isUser
-  ### Parameters
-  | Name | Type |
-  | - | - |
-  | token | string |
-  ### Returns
-  | Name | Type |
-  | - | - |
-  | success | bool |
-## • getUserName
-  ### Parameters
-  | Name | Type |
-  | - | - |
-  | token | string |
-  ### Returns
-  | Name | Type |
-  | - | - |
-  | success | bool |
-  | username | string |
-## • getUserType
-  ### Parameters
-  | Name | Type |
-  | - | - |
-  | token | string |
-  ### Returns
-  | Name | Type |
-  | - | - |
-  | success | bool |
-  | type | int |
-## • getUserInfo
-  ### Parameters
-  | Name | Type | Description |
-  | - | - | - |
-  | token | string |  |
-  | keys | array | Keys: "id", "token", "name", "login", "password", "type", "picture" |
-  ### Returns
-  | Name | Type |
-  | - | - |
-  | success | bool |
-  | data | json |
-## • getEmployees
-  ### Parameters
-  | Name | Type |
-  | - | - |
-  | token | string |
-  ### Returns
-  | Name | Type | Description |
-  | - | - | - |
-  | success | bool |  |
-  | data | json | users: {id: int, name: string, type: int, picture: string} |
-## • getTypes
-  ### Parameters
-  | Name | Type |
-  | - | - |
-  | token | string |
-  ### Returns
-  | Name | Type | Description |
-  | - | - | - |
-  | success | bool |  |
-  | data | json | types: [str] |
-# Frontend API
-## • request
-  ### Parameters
-  | Name | Type |
-  | - | - |
-  | method | string |
-  | data | json |
-  ### Returns
-  | Name | Type | Description |
-  | - | - | - |
-  | success | bool |  |
-  | data | json | {success: true, data: {}} or {success: false, error: true, err} |
+![](https://i.imgur.com/GJwSkIz.png)
+![](https://i.imgur.com/UwEZX8h.png)
+
+# Неясности в задании
+1. Неуверен, что пользователи действительно добавляются администратором. Не описан процесс регистрации пользователей, из-за чего появляется странный способ регистрации, описанный выше, в котором есть несколько проблем (Что если у нескольких новых пользователей совпадет ФИО? Что если кто-то зарегистрируется до настоящего пользователя?)
+2. Есть ощущение, что изначально задумывались файлы Exel с исходными данными. Неизвестно, что в них должно быть.
+3. Кто является сотрудником? Агент - не сотрудник? Менеджер, бухгалтер, администратор - сотрудники? В одной организации работают все типы сотрудников? Менеджер = агент?
+4. Почему только агент может работать только в одной организации? Что такое организация? Где указываются организации?
+5. В предоставленной форме карточки сотрудников есть только: Имя, ФИО, Дата рождения и Фото. Где указывается тип сотрудника (Менеджер, Агент, Бухгалтер)?
+6. Говорится, что полные имена сотрудников задаются в формате "Имя Фамилия Отчество". Речь идет о данных из .xlsx файлы?
+7. Зачем нужны данные о странах, городах, отелях, агентах, если автоматическая загрузка должна быть реализована только для данных сотрудников и клиентов? 
+8. У кого есть доступ к просмотру отчетов?

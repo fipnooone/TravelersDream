@@ -3,10 +3,16 @@ $permissions = array( //0 - admin
     "getEmployees" => array(0),
     "getTypes" => array(0),
     "updateUserInfo" => array(0),
-    "createUser" => array(0)
+    "createUser" => array(0),
+
+    "t_clients" => array(0, 2, 3, 4),
+    "t_contracts" => array(0, 2, 3, 4),
+    "t_payments" => array(0, 4),
+    "t_users" => array(0),
+    "t_usertypes" => array(0),
 );
 function getkey($key) {
-    switch ($key){
+    switch ($key) {
         case "id":
             return 0;
         case "token":
@@ -29,18 +35,48 @@ function getkey($key) {
             return false;
     }
 }
+function tableName($key) {
+    switch ($key) {
+        case 'clients':
+            return 'Клиенты';
+        case 'contracts':
+            return 'Договоры';
+        case 'payments':
+            return 'Платежи';
+        case 'users':
+            return 'Пользователи';
+        case 'usertypes':
+            return 'Типы пользователей';
+        default:
+            return false;
+    }
+}
+$clientTypes = array(
+    0 => "Обычный",
+    1 => "Привелигированный",
+    2 => "VIP"
+);
 function transliterate($st) {
-    $st = strtr($st,
-      "абвгдежзийклмнопрстуфыэАБВГДЕЖЗИЙКЛМНОПРСТУФЫЭ",
-      "abvgdegziyklmnoprstufieABVGDEGZIYKLMNOPRSTUFIE"
-    );
-    $st = strtr($st, array(
-      'ё'=>"yo",    'х'=>"h",  'ц'=>"ts",  'ч'=>"ch", 'ш'=>"sh",
-      'щ'=>"shch",  'ъ'=>'',   'ь'=>'',    'ю'=>"yu", 'я'=>"ya",
-      'Ё'=>"Yo",    'Х'=>"H",  'Ц'=>"Ts",  'Ч'=>"Ch", 'Ш'=>"Sh",
-      'Щ'=>"Shch",  'Ъ'=>'',   'Ь'=>'',    'Ю'=>"Yu", 'Я'=>"Ya",
-    ));
-    return $st;
+    $gost = array(
+        "а"=>"a","б"=>"b","в"=>"v","г"=>"g","д"=>"d",
+        "е"=>"e", "ё"=>"yo","ж"=>"j","з"=>"z","и"=>"i",
+        "й"=>"i","к"=>"k","л"=>"l", "м"=>"m","н"=>"n",
+        "о"=>"o","п"=>"p","р"=>"r","с"=>"s","т"=>"t",
+        "у"=>"y","ф"=>"f","х"=>"h","ц"=>"c","ч"=>"ch",
+        "ш"=>"sh","щ"=>"sh","ы"=>"i","э"=>"e","ю"=>"u",
+        "я"=>"ya",
+        "А"=>"A","Б"=>"B","В"=>"V","Г"=>"G","Д"=>"D",
+        "Е"=>"E","Ё"=>"Yo","Ж"=>"J","З"=>"Z","И"=>"I",
+        "Й"=>"I","К"=>"K","Л"=>"L","М"=>"M","Н"=>"N",
+        "О"=>"O","П"=>"P","Р"=>"R","С"=>"S","Т"=>"T",
+        "У"=>"Y","Ф"=>"F","Х"=>"H","Ц"=>"C","Ч"=>"Ch",
+        "Ш"=>"Sh","Щ"=>"Sh","Ы"=>"I","Э"=>"E","Ю"=>"U",
+        "Я"=>"Ya",
+        "ь"=>"","Ь"=>"","ъ"=>"","Ъ"=>"",
+        "ї"=>"j","і"=>"i","ґ"=>"g","є"=>"ye",
+        "Ї"=>"J","І"=>"I","Ґ"=>"G","Є"=>"YE"
+        );
+    return strtr($st, $gost);
 }
 function generateRandomString($length = 10) {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';

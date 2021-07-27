@@ -167,7 +167,6 @@ function updateUserInfo($conn, $data, $files) {
         if ($query != "" and mysqli_query($conn, "UPDATE `users` SET {$query} WHERE `users`.`id` = {$data["id"]}"))
             $__data["success"] = true;
     }
-    
     return $__data;
 }
 
@@ -201,11 +200,9 @@ function createUser($conn, $data, $files) {
         } else {
             $query['photo'] = '0.png';
         }
-        //$query["token"] = password_hash($query["login"], PASSWORD_BCRYPT); 
         if ($query != "" and mysqli_query($conn, "INSERT INTO `users`(`name`, `fio`, `type`, `bdate`, `photo`) VALUES (\"{$query['name']}\", \"{$query['fio']}\", \"{$query['type']}\", \"{$query['bdate']}\", \"{$query['photo']}\")"))
             $__data["success"] = true;
     }
-    
     return $__data;
 }
 ?>

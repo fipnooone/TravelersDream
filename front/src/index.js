@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ProtectedRoute from './Components/ProtectedRoute';
 import Authorization from './Components/Authorization';
-import LK from './Components/lk';
+import LK from './Components/Lk';
 import './index.sass';
 //import reportWebVitals from './reportWebVitals';
 

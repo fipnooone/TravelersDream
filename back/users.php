@@ -1,16 +1,4 @@
 <?php
-function getUsers($conn, $v) {
-    $users = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `users` WHERE `login` = \"{$v}\""));
-    if (count($users) == 0) return false;
-    else return $users;
-}
-
-function getUser($conn, $v) {
-    $users = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `users` WHERE `token` = \"{$v}\""));
-    if (count($users) == 0) return false;
-    else return $users[0];
-}
-
 function __getUserById($conn, $id) {
     $users = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `users` WHERE `id` = \"{$id}\""));
     if (count($users) == 0) return false;
@@ -22,13 +10,22 @@ function __getUserByFio($conn, $fio) {
     else return $users[0];
 }
 
+function getUsers($conn, $v) {
+    $users = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `users` WHERE `login` = \"{$v}\""));
+    if (count($users) == 0) return false;
+    else return $users;
+}
+function getUser($conn, $v) {
+    $users = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `users` WHERE `token` = \"{$v}\""));
+    if (count($users) == 0) return false;
+    else return $users[0];
+}
 function isNewUserByFio($conn, $data) {
     $__data = array( "success" => false );
     $user = __getUserByFio($conn, $data["fio"]);
     if ($user) $__data["success"] = true;
     return $__data;
 }
-
 function login($conn, $data) { // login and password
     $__data = array( "success" => false );
     $login = $data["login"];
@@ -51,7 +48,6 @@ function login($conn, $data) { // login and password
     if (!$__data["success"]) $__data["message"] = "Логин или пароль введены неверно";
     return $__data;
 }
-
 function register($conn, $data) { // fio, login and password
     $__data = array( "success" => false );
     $login = $data["login"];
@@ -78,14 +74,12 @@ function register($conn, $data) { // fio, login and password
     }
     return $__data;
 }
-
 function isUser($conn, $data) { // token
     $__data = array( "success" => false );
     $user = getUser($conn, $data["token"]);
     if ($user) $__data["success"] = true;
     return $__data;
 }
-
 function getUserName($conn, $data) { // token
     $__data = array( "success" => false );
     $user = getUser($conn, $data["token"]);
@@ -95,7 +89,6 @@ function getUserName($conn, $data) { // token
     }
     return $__data;
 }
-
 function getUserType($conn, $data) {
     $__data = array( "success" => false );
     $user = getUser($conn, $data["token"]);
@@ -105,7 +98,6 @@ function getUserType($conn, $data) {
     }
     return $__data;
 }
-
 function getUserInfo($conn, $data) {
     $__data = array(
         "success" => false,
@@ -121,7 +113,6 @@ function getUserInfo($conn, $data) {
     }
     return $__data;
 }
-
 function __getUserInfoById($conn, $id, $keys) {
     $__data = array();
     $user = __getUserById($conn, $id);
@@ -200,8 +191,13 @@ function createUser($conn, $data, $files) {
         } else {
             $query['photo'] = '0.png';
         }
-        if ($query != "" and mysqli_query($conn, "INSERT INTO `users`(`name`, `fio`, `type`, `bdate`, `photo`) VALUES (\"{$query['name']}\", \"{$query['fio']}\", \"{$query['type']}\", \"{$query['bdate']}\", \"{$query['photo']}\")"))
-            $__data["success"] = true;
+        if ($query != "")
+            $__res = mysqli_query($conn, "INSERT INTO `users`(`name`, `fio`, `type`, `bdate`, `photo`) VALUES (\"{$query['name']}\", \"{$query['fio']}\", \"{$query['type']}\", \"{$query['bdate']}\", \"{$query['photo']}\")");
+            if ($__res) {
+                $res = mysqli_fetch_all($__res);
+                var_dump($res);
+                $__data["success"] = true;
+            }
     }
     return $__data;
 }

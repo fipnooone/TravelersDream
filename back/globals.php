@@ -4,12 +4,13 @@ $permissions = array( //0 - admin
     "getTypes" => array(0),
     "updateUserInfo" => array(0),
     "createUser" => array(0),
-
-    "t_clients" => array(0, 2, 3, 4),
-    "t_contracts" => array(0, 2, 3, 4),
-    "t_payments" => array(0, 4),
-    "t_users" => array(0),
-    "t_usertypes" => array(0),
+);
+$categories = array(
+    "clients",
+    "contracts",
+    "payments",
+    "users",
+    "usertypes"
 );
 function getkey($key) {
     switch ($key) {
@@ -31,6 +32,72 @@ function getkey($key) {
             return 7;
         case "photo":
             return 8;
+        default:
+            return false;
+    }
+}
+function getkeyClients($key) {
+    switch ($key) {
+        case "id":
+            return 0;
+        case "fio":
+            return 1;
+        case "name":
+            return 2;
+        case "passport_series":
+            return 3;
+        case "passport_number":
+            return 4;
+        case "issue_date":
+            return 5;
+        case "expiration_date":
+            return 6;
+        case "issuing_authority":
+            return 7;
+        case "status":
+            return 8;
+        default:
+            return false;
+    }
+}
+function getkeyContracts($key) {
+    switch ($key) {
+        case "id":
+            return 0;
+        case "date":
+            return 1;
+        case "contract":
+            return 2;
+        case "organization":
+            return 3;
+        case "executor":
+            return 4;
+        case "client":
+            return 5;
+        case "start_of_trip":
+            return 6;
+        case "end_of_trip":
+            return 7;
+        case "participants":
+            return 8;
+        case "route":
+            return 9;
+        default:
+            return false;
+    }
+}
+function getkeyPayments($key) {
+    switch ($key) {
+        case "id":
+            return 0;
+        case "date":
+            return 1;
+        case "organization":
+            return 2;
+        case "contract":
+            return 3;
+        case "amount":
+            return 4;
         default:
             return false;
     }

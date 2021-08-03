@@ -1,7 +1,7 @@
-$color-dark: #2c2c34 //#0e1118
-$color-light: #494850 //#20232d
+$color-dark: #2c2c34
+$color-light: #494850
 $color-blue-gray: #3e4350
-$color-gray: #e2e2e2//#b2b2b2
+$color-gray: #e2e2e2
 $gradient-main: linear-gradient( to right, #e877ae, #7c73f3 ) 100% 1%
 $gradient-dark: linear-gradient( to right, #151820, #20232D ) 100% 1%
 
@@ -53,7 +53,6 @@ a
     text-decoration: none
 ul
     list-style: none
-
 header
     margin-left: 18vw
     padding: 0 25px
@@ -149,31 +148,6 @@ footer #LogoFooter
     user-select: none
     height: 32px
     width: 202px
-/*footer ul
-    width: 68vw
-    height: 100%
-    margin: 0 16vw 0 16vw
-    padding: 0
-/*footer ul li
-    display: inline-block
-/*footer .Text, a
-    margin-top: 8px
-    color: $color-light
-    line-height: 16px
-    text-align: center
-    font-family: $font-Montserrat-LightItalic
-    font-size: 20px
-    width: 200px
-/*footer #LogoFooter
-    user-select: none
-    margin-top: 10px
-    position: fixed
-    display: block
-    margin-left: Calc(34vw - 102px)
-/*footer .Org-Name
-    float: left
-/*footer .Sign
-    float: right
 /* Main Block-End
 /* Auth Block-Start
 #Authorization
@@ -314,8 +288,11 @@ header #UserHeader .user-header-more a
         font-size: 18px
         margin: 5px 0
         cursor: pointer
-        &:hover
-            background-color: $color-dark
+        transition: 0.3s
+    & .p-active
+        background-color: $color-dark
+    & #catusertypes
+        height: 54px
 #LK .control-panel .list-of
     display: flex
     flex-direction: column
@@ -355,19 +332,19 @@ header #UserHeader .user-header-more a
     cursor: pointer
     &:hover
         transform: scale(1.01)
-    & .user-picture
+    & .u-picture
         height: 58px
         width: 58px
         border-radius: 40px
         margin-left: 11px
-    & .user-text
+    & .u-text
         color: white
         margin: 0 0 0 45px
         line-height: 20px
-    & .user-name
+    & .u-name
         font-family: $font-Montserrat-Medium
         font-size: 22px
-    & .user-type
+    & .u-type
         font-family: $font-Montserrat-Regular
         font-size: 20px
 #LK .mib

@@ -7,16 +7,33 @@ async function request(method, data) {
     formData.append("data", JSON.stringify(data));
     return await axios.post("http://dream", formData).then(res => {
         if (res.data.success) {
-            return {success: true, data: res.data}
+            return {success: true, data: res.data, error: false}
         }
         else {
-            return {success: false, data: res.data}
+            return {success: false, data: res.data, error: false}
         }
     })
     .catch(err => {
-        return {success: false, error: true, err}
+        return {success: false, error: err}
     });
 }
+
+async function requests(methodsAndData, generalData) { // {"method": {}, "data": {}}
+    let formData = new FormData();
+    formData.append("multi", true);
+    formData.append("MAD", JSON.stringify(methodsAndData));
+    formData.append("data",  JSON.stringify(generalData));
+    return await axios.post("http://dream", formData).then(res => {
+        let data = res.data;
+        if (data.success) {
+            return data;
+        }
+        else {
+            return data;
+        }
+    });
+}
+
 async function uploadFiles(method, data, files) {
     let formData = new FormData();
     formData.append("method", method);
@@ -42,5 +59,5 @@ function getToken() {
     return JSON.parse(Cookies.get("data")).token
 }
 
-export {request, uploadFiles, getToken};
+export {request, requests, uploadFiles, getToken};
 //import {request, uploadFiles, getToken} from './requests';

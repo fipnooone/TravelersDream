@@ -191,13 +191,8 @@ function createUser($conn, $data, $files) {
         } else {
             $query['photo'] = '0.png';
         }
-        if ($query != "")
-            $__res = mysqli_query($conn, "INSERT INTO `users`(`name`, `fio`, `type`, `bdate`, `photo`) VALUES (\"{$query['name']}\", \"{$query['fio']}\", \"{$query['type']}\", \"{$query['bdate']}\", \"{$query['photo']}\")");
-            if ($__res) {
-                $res = mysqli_fetch_all($__res);
-                var_dump($res);
-                $__data["success"] = true;
-            }
+        if ($query != "" and mysqli_query($conn, "INSERT INTO `users`(`name`, `fio`, `type`, `bdate`, `photo`) VALUES (\"{$query['name']}\", \"{$query['fio']}\", \"{$query['type']}\", \"{$query['bdate']}\", \"{$query['photo']}\")"))
+            $__data["success"] = true;
     }
     return $__data;
 }

@@ -191,7 +191,7 @@ class LK extends Component {
                 case 'users':
                     return [<>
                         <div className='input-name input-row'> 
-                            <p> Имя </p> <input id='inputName' className='r' type='text' defaultValue={params.name ? params.name : ''} />
+                            <p> Имя </p> <input id='inputName' type='text' defaultValue={params.name ? params.name : ''} />
                         </div>
                         <div className="input-fio input-row">
                             <p> ФИО </p> <input id="inputFIO" type="text" onChange={(e) => {
@@ -207,13 +207,119 @@ class LK extends Component {
                         <div className="input-type input-row">
                             <p> Тип </p> <select id="selectType" defaultValue={params.type ? params.type : 0}> {this.state.blocks.types} </select>
                         </div>
-                    </>, action === 0 ? 'Создание' : params.name];
+                    </>, 320, action === 0 ? 'Создание' : params.name];
                 case 'clients':
-                    return [<></>, action === 0 ? 'Создание' : ''];
+                    return [<>
+                        <div className='tabs'>
+                            <button id='tabMain' className='tab tab-main' onClick={(e) => {
+                                e.target.style.backgroundColor = '#494850';
+                                document.getElementById('tabPassport').style.backgroundColor = '#2c2c34';
+                                document.getElementById('tabMainContent').style.display = 'block';
+                                document.getElementById('tabPassportContent').style.display = 'none';
+                            }}>Основное</button>
+                            <button id='tabPassport' className='tab tab-passport' onClick={(e) => {
+                                document.getElementById('tabMain').style.backgroundColor = '#2c2c34';
+                                e.target.style.backgroundColor = '#494850';
+                                document.getElementById('tabMainContent').style.display = 'none';
+                                document.getElementById('tabPassportContent').style.display = 'block';
+                            }}>Паспортные данные</button>
+                        </div>
+                        <div id='tabMainContent' className='tab-content'>
+                            <div className='input-name input-row'> 
+                                <p> Имя </p> <input id='inputName' type='text' defaultValue={params.name ? params.name : ''} />
+                            </div>
+                            <div className='input-fio input-row'>
+                                <p> ФИО </p> <input id="inputFIO" type='text' onChange={(e) => {
+                                    let fio = e.target.value.split(' ');
+                                    document.getElementById('inputName').value = (fio[0] ? fio[0] : '') + 
+                                        (fio[1] ?  ` ${fio[1][0]}.` : '') + 
+                                        (fio[2] ? ` ${fio[2][0]}.` : '');
+                                }} defaultValue={params.fio ? params.fio : ''} />
+                            </div>
+                            <div className='input-date input-row'>
+                                <p> Дата рождения </p> <input id='inputBDate' type='date' defaultValue={params.bdate ? params.bdate : ''} />
+                            </div>
+                            <div className='input-type input-row'>
+                                <p> Статус </p> <select id="selectType" defaultValue={params.status ? params.status : 0}>
+                                    <option value={0}>Обычный</option>
+                                    <option value={1}>Привелигированный</option>
+                                    <option value={2}>VIP</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id='tabPassportContent' className='tab-content'>
+                            <div className='input-number input-row'> 
+                                <p> Серия </p> <input id='inputPassportSeries' type='number' defaultValue={params.passportSeries ? params.passportSeries : ''} />
+                                <p> Номер </p> <input id='inputPassportNumber' type='number' defaultValue={params.passportNumber ? params.passportNumber : ''} />
+                            </div>
+                            <div className='input-date input-row'> 
+                                <p> Дата выдачи </p> <input id='inputPassportIssue' type='date' defaultValue={params.issueDate ? params.issueDate : ''} />
+                            </div>
+                            <div className='input-date input-row'> 
+                                <p> Дата окончания срока действия </p> <input id='inputPassportExpiration' type='date' defaultValue={params.expirationDate ? params.expirationDate : ''} />
+                            </div>
+                            <div className='input-text input-row'> 
+                                <p> Орган, выдавший документ </p> <input id='inputAuthority' type='text' defaultValue={params.issuingAuthority ? params.issuingAuthority : ''} />
+                            </div>
+                        </div>
+                    </>, 350, action === 0 ? 'Создание' : ''];
                 case 'contracts':
-                    return [<></>, action === 0 ? 'Создание' : ''];
+                    return [<>
+                        <div className='input-date input-row'> 
+                            <p> Дата </p> <input id='inputDate' type='date' defaultValue={params.Date ? params.Date : ''} />
+                        </div>
+                        <div className='input-text input-row'> 
+                            <p> Соглашение </p> <input id='inputContract' type='text' defaultValue={params.contract ? params.contract : ''} />
+                        </div>
+                        <div className='input-text input-row'> 
+                            <p> Организация </p> <input id='inputOrganization' type='text' defaultValue={params.organization ? params.organization : ''} />
+                        </div>
+                        <div className='input-text input-row'> 
+                            <p> Агент </p> <input id='inputExecutor' type='text' defaultValue={params.executor ? params.executor : ''} />
+                        </div>
+                        <div className='input-text input-row'> 
+                            <p> Клиент </p> <input id='inputClient' type='text' defaultValue={params.client ? params.client : ''} />
+                        </div>
+                        <div className='input-date input-row'> 
+                            <p> Начало поездки </p> <input id='inputDateStart' type='date' defaultValue={params.tripStart ? params.tripStart : ''} />
+                            <p> Конец поездки </p> <input id='inputDateEnd' type='date' defaultValue={params.tripEnd ? params.tripEnd : ''} />
+                        </div>
+                        <div className='tabs margin-top'>
+                            <button id='tabTripParticipants' className='tab tab-tripParticipants' onClick={(e) => {
+                                e.target.style.backgroundColor = '#494850';
+                                document.getElementById('tabTripRoute').style.backgroundColor = '#2c2c34';
+                                document.getElementById('tabParticipantsContent').style.display = 'block';
+                                document.getElementById('tabRouteContent').style.display = 'none';
+                            }}> Участники поездки </button>
+                            <button id='tabTripRoute' className='tab tab-tripRoute' onClick={(e) => {
+                                e.target.style.backgroundColor = '#494850';
+                                document.getElementById('tabTripParticipants').style.backgroundColor = '#2c2c34';
+                                document.getElementById('tabParticipantsContent').style.display = 'none';
+                                document.getElementById('tabRouteContent').style.display = 'block';
+                            }}> Маршрут поездки </button>
+                        </div>
+                        <div id='tabParticipantsContent' className='tab-content'>
+                            test1
+                        </div>
+                        <div id='tabRouteContent' className='tab-content'>
+                            test2
+                        </div>
+                    </>, 480, action === 0 ? 'Создание' : ''];
                 case 'payments':
-                    return [<></>, action === 0 ? 'Создание' : ''];
+                    return [<>
+                        <div className='input-date input-row'> 
+                            <p> Дата </p> <input id='inputDate' type='date' defaultValue={params.date ? params.date : ''} />
+                        </div>
+                        <div className="input-text input-row">
+                            <p> Организация </p> <input id="selectOrganization" type='text' defaultValue={params.organization ? params.organization : ''} />
+                        </div>
+                        <div className="input-text input-row">
+                            <p> Договор </p> <input id="selectContract" type='text' defaultValue={params.contract ? params.contract : ''} />
+                        </div>
+                        <div className="input-text input-row">
+                            <p> Сумма в рублях </p> <input id="selectAmount" type='number' defaultValue={params.amount ? params.amount : ''} />
+                        </div>
+                    </>, 310, action === 0 ? 'Создание' : ''];
                 case 'usertypes':
                     return [<>
                         <div className='input-name input-row'> 
@@ -222,12 +328,12 @@ class LK extends Component {
                         <div className="input-type input-row">
                             <p> Разрешения </p> <select id="selectType" defaultValue={0}> </select>
                         </div>
-                    </>, action === 0 ? 'Создание' : params.type];
+                    </>, 230, action === 0 ? 'Создание' : params.type];
                 default:
-                    return <></>
+                    return [<></>, 0, '']
             }
         };
-        const [__textInput, __title] = __getInput(type);
+        const [__textInput, __height, __title] = __getInput(type);
         const __imageInput = (type === 'users') ? 
         <div className="image-input-block">
             <p className="image-title"> Фото </p>
@@ -241,7 +347,7 @@ class LK extends Component {
         </div> : <></>;
 
         let __newCP = (
-            <div id='LKMIB-CNew' className='create-new'>
+            <div id='LKMIB-CNew' className='create-new' style={{height: __height}}>
                 <div className="title-block">
                     <p id="CNewTitle" className="title-name"> {__title} </p>
                     <svg className="title-close" viewBox="0 0 20 20" onClick={ () => this.mib() }>

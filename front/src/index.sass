@@ -411,6 +411,24 @@ header #UserHeader .user-header-more a
         &:active
             transform: translateY(0px)
             box-shadow: 0 0 0
+    & .tabs
+        border-bottom: 2px solid $color-light
+        & .tab
+            border: none
+            border-radius: 0
+            outline: none
+            cursor: pointer
+            padding: 5px 12px
+            transition: 0.3s
+            font-size: 17px
+            font-family: $font-Montserrat-Medium
+            color: $color-gray
+        & .tab-main, .tab-tripParticipants
+            background-color: $color-light
+        & .tab-passport, .tab-tripRoute
+            background-color: $color-dark
+    & #tabPassportContent, #tabRouteContent
+        display: none
 #LK .create-new .input-block .text-input
     flex: auto
     margin: 0 45px 0 45px 
@@ -442,6 +460,10 @@ header #UserHeader .user-header-more a
         cursor: pointer
         & option
             background-color: $color-light
+    & #inputPassportSeries, #inputDateStart
+        margin-right: 10px
+.margin-top
+    margin-top: 15px
 #LK .create-new .input-block .image-input-block
     flex: auto
     & .image-title

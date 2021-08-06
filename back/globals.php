@@ -57,6 +57,8 @@ function getkeyClients($key) {
             return 6;
         case "status":
             return 7;
+        case "bdate":
+            return 8;
         default:
             return false;
     }

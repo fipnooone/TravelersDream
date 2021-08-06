@@ -35,7 +35,9 @@ function sortingHat($conn, $r) {
         case "isNewUserByFio":
             return isNewUserByFio($conn, $r["data"]);
         case "getCategories":
-            return getCategories($conn, $data);
+            return getCategories($conn, $r["data"]);
+        case "createClient":
+            return createClient($conn, $r["data"]);
         default:
             return array(
                 "success" => false,
@@ -76,6 +78,8 @@ function sorter($conn, $method, $data, $files=array()) {
             return isNewUserByFio($conn, $data);
         case "getCategories":
             return getCategories($conn, $data);
+        case "createClient":
+            return createClient($conn, $data);
         default:
             return array(
                 "success" => false,

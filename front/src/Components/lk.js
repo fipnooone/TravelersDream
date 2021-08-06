@@ -49,9 +49,47 @@ class LK extends Component {
     };
 
     uploadXlsx(l, file) {
-        readXlsx(file).then((rows) => {
-            console.log(rows);
-          })
+        let __schema = {};
+        let __read = (s) => {
+            readXlsx(file, s).then((rows) => {
+                console.log(rows);
+            });
+        };
+        if (l === 'users')
+            __read({
+
+            });
+        else if (l === 'clients')
+            __read({
+                'FIO': {
+                    prop: 'fio',
+                    type: String
+                },
+                'BIRTHDAY': {
+                    prop: 'bdate',
+                    type: Date
+                },
+                'STATUS': {
+                    prop: 'status',
+                    type: String
+                },
+                'PSERIES': {
+                    prop: 'passportSeries',
+                    type: Number
+                },
+                'PNUMBER': {
+                    prop: 'passportNumber',
+                    type: Number
+                },
+                'ISSUEDATE': {
+                    prop: 'issueDate',
+                    type: Date
+                },
+                'ISSUINGAUTHORITY': {
+                    prop: 'issuingAuthority',
+                    type: String
+                }
+            });
     }
 
     setListOf(l) {
@@ -275,7 +313,7 @@ class LK extends Component {
                                 <p> Дата рождения </p> <input id='inputBDate' type='date' defaultValue={params.bdate ? params.bdate : ''} />
                             </div>
                             <div className='input-type input-row'>
-                                <p> Статус </p> <select id="selectType" defaultValue={params.status ? params.status : 0}>
+                                <p> Статус </p> <select id="selectStatus" defaultValue={params.status ? params.status : 0}>
                                     <option value={0}>Обычный</option>
                                     <option value={1}>Привелигированный</option>
                                     <option value={2}>VIP</option>
@@ -413,16 +451,17 @@ class LK extends Component {
                         {__textInput}
                         <button className='button-save' onClick={()=>{
                             let __doSomething = (t) => {
+                                let __currData = {};
+                                let __query = {};
                                 switch (t) {
                                     case 'users':
-                                        let __currData = {
+                                        __currData = {
                                             name: document.getElementById("inputName").value,
                                             fio: document.getElementById("inputFIO").value,
                                             bdate: document.getElementById("inputBDate").value,
                                             type: document.getElementById("selectType").value,
                                             photo: this.state.currCP.photo
                                         };
-                                        let __query = {};
                                         if (this.state.currCP.action === 1) { // update
                                             let __originalData = this.state.currCP.data;
                                             Object.keys(__originalData).map(key => {
@@ -445,16 +484,49 @@ class LK extends Component {
                                                 this.mib();
                                             });
                                         }
+                                        return;
                                     case 'clients': 
-                                        return {};
+                                        __currData = {
+                                            fio: document.getElementById("inputFIO").value,
+                                            name: document.getElementById("inputName").value,
+                                            passport_series: document.getElementById("inputPassportSeries").value,
+                                            passport_number: document.getElementById("inputPassportNumber").value,
+                                            issue_date: document.getElementById("inputPassportIssue").value,
+                                            issuing_authority: document.getElementById("inputAuthority").value,
+                                            status: document.getElementById("selectStatus").value,
+                                            bdate: document.getElementById("inputBDate").value,
+                                        };
+                                        if (this.state.currCP.action === 1) { // update
+                                            /*let __originalData = this.state.currCP.data;
+                                            Object.keys(__originalData).map(key => {
+                                                if (__currData[key] !== __originalData[key] && key !== 'id') 
+                                                    if (key == 'status') __query[key] = +__currData[key] + 1;
+                                            });
+                                            if (__query !== {}) 
+                                                uploadFiles('updateUserInfo', { token: getToken(), id: __originalData.id, keys: __query }, [__currData.photo ? __currData.photo : undefined]).then(res => {
+                                                    this.update(this.state.currCP.type);
+                                                    this.showCreatePanel(1, this.state.currCP.type, Object.assign(__currData, {
+                                                        id: __originalData.id, photo: __currData.photo ? window.URL.createObjectURL(__currData.photo) : __originalData.photo
+                                                    }));
+                                                });*/
+                                        } else if (this.state.currCP.action === 0) { // create
+                                            Object.keys(__currData).map(key => {
+                                                if (key !== 'photo') __query[key] = __currData[key];
+                                            });
+                                            request("createClient", {token: getToken(), client: __query}).then( res => {
+                                                this.update(this.state.currCP.type);
+                                                this.mib();
+                                            });
+                                        }
+                                        return;
                                     case 'contracts':
-                                        return {};
+                                        return;
                                     case 'payments':
-                                        return {};
+                                        return;
                                     case 'usertypes':
-                                        return {};
+                                        return;
                                     default:
-                                        return {};
+                                        return;
                                 }
                             };
 

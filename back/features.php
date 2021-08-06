@@ -9,6 +9,16 @@ function isAllowed($conn, $token, $allowed) {
         return false;
     }
 }
+function isAllowedT($conn, $token, $method) {
+    $type = getUser($conn, $token)[getkey("type")];
+    $_perms = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `usertypes`"))[$type - 1];
+    $perms = json_decode($_perms[2], true)["permissions"];
+    if (in_array("all", $perms) or in_array($method, $perms)) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 function getCategories($conn, $data) {
     global $categories;
@@ -180,6 +190,41 @@ function getTypes($conn, $data) {
         $types = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `usertypes`"));
         $__data["success"] = true;
         foreach ($types as $type) { array_push($__data["data"]["types"], $type[1]); }
+    }
+    return $__data;
+}
+
+function createClient($conn, $data) {
+    $__data = array(
+        'success' => false
+    );
+    function __create($conn, $__client) {
+        $__query = array(
+            'fio' => array_key_exists('fio', $__client) ? $__client['fio'] : NULL,
+            'name' => array_key_exists('name', $__client) ? $__client['name'] : NULL,
+            'passport_series' => array_key_exists('passport_series', $__client) ? $__client['passport_series'] : NULL,
+            'passport_number' => array_key_exists('passport_number', $__client) ? $__client['passport_number'] : NULL,
+            'issue_date' => array_key_exists('issue_date', $__client) ? $__client['issue_date'] : NULL,
+            'issuing_authority' => array_key_exists('issuing_authority', $__client) ? $__client['issuing_authority'] : NULL,
+            'status' => array_key_exists('status', $__client) ? $__client['status'] : NULL,
+            'bdate' => array_key_exists('bdate', $__client) ? $__client['bdate'] : NULL
+        );
+        $__qString = "INSERT INTO `clients`(`fio`, `name`, `passport_series`, `passport_number`, `issue_date`, `issuing_authority`, `status`, `bdate`) VALUES (\"{$__query['fio']}\", \"{$__query['name']}\", \"{$__query['passport_series']}\", \"{$__query['passport_number']}\", \"{$__query['issue_date']}\", \"{$__query['issuing_authority']}\", \"{$__query['status']}\", \"{$__query['bdate']}\")";
+        echo $__qString;
+        if (mysqli_query($conn, $__qString))
+                    return true;
+        else return false;
+    }
+    if (isAllowedT($conn, $data['token'], 'clients')) {
+        var_dump($data);
+        if (array_key_exists('client', $data)) {
+            echo 'client';
+            $__data['success'] = __create($conn, $data['client']);
+        } elseif (array_key_exists('clients', $data)) {
+            foreach ($data['clients'] as $client) {
+                $__data['success'] = __create($conn, $client);
+            }
+        }
     }
     return $__data;
 }

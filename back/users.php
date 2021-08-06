@@ -138,7 +138,6 @@ function updateUserInfo($conn, $data, $files) {
     $fio = $udata['fio'];
     $photo = $udata['photo'];
     $randname = transliterate(str_replace(' ', '-', $fio)).'-'.generateRandomString(5);
-    $ext = preg_replace("/(.*)\/(?:)/", '', $files['files']['type'][0]);
     if (isAllowed($conn, $data["token"], $permissions["updateUserInfo"])) {
         $counter = 1;
         $total = count($data["keys"]);
@@ -147,6 +146,7 @@ function updateUserInfo($conn, $data, $files) {
             $counter += 1;
         }
         if ($files) {
+            $ext = preg_replace("/(.*)\/(?:)/", '', $files['files']['type'][0]);
             $query = $query . ($counter > 1 ? ", " : "") . "`photo` = '{$randname}.{$ext}'".(($counter < $total) ? ", " : "");
             move_uploaded_file(
                 $files["files"]['tmp_name'][0], 

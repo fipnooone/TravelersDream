@@ -154,6 +154,14 @@ function getListOf($conn, $data) {
                         "permissions" => $utype[2]
                     ));
                 }
+            case 'branches':
+                $branches = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `branches`"));
+                foreach ($branches as $branch) {
+                    array_push($__data["data"]['list'], array(
+                        "id" => $branch[0],
+                        "name" => $branch[1]
+                    ));
+                }
                 return $__data;
         }
     }

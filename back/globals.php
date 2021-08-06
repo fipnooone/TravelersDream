@@ -6,11 +6,12 @@ $permissions = array( //0 - admin
     "createUser" => array(0),
 );
 $categories = array(
-    "clients",
-    "contracts",
-    "payments",
-    "users",
-    "usertypes"
+    'clients',
+    'contracts',
+    'payments',
+    'users',
+    'usertypes',
+    'branches',
 );
 function getkey($key) {
     switch ($key) {
@@ -30,8 +31,10 @@ function getkey($key) {
             return 6;
         case "bdate":
             return 7;
-        case "photo":
+        case 'branch':
             return 8;
+        case "photo":
+            return 9;
         default:
             return false;
     }
@@ -50,12 +53,10 @@ function getkeyClients($key) {
             return 4;
         case "issue_date":
             return 5;
-        case "expiration_date":
-            return 6;
         case "issuing_authority":
-            return 7;
+            return 6;
         case "status":
-            return 8;
+            return 7;
         default:
             return false;
     }

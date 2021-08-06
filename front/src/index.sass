@@ -299,54 +299,76 @@ header #UserHeader .user-header-more a
     border-left: 1px solid $color-dark
     padding-left: 36px
     width: 800px
-#LK .control-panel .list-of .button-create
-    margin-left: auto
-    width: 165px
-    height: 34px
-    border-radius: 15px
-    background: $color-dark
-    color: white
-    font-family: $font-Montserrat-Regular
-    font-size: 18px
-    display: flex
-    align-items: center
-    justify-content: center
-    transition: 0.1s
-    cursor: pointer
-    &:hover
-        transform: translateY(-3px)
-        box-shadow: 0px 1px 0px $color-gray
-    &:active
-        transform: translateY(0)
-        box-shadow: 0 0
-#LK .control-panel .list-of .not-enought
-    height: 70px
-    width: 100%
-    background: $color-dark
-    border-radius: 15px
-    margin: 8px 0
-    display: flex
-    flex-direction: row
-    align-items: center
-    transition: transform 0.2s
-    cursor: pointer
-    &:hover
-        transform: scale(1.01)
-    & .u-picture
-        height: 58px
-        width: 58px
-        border-radius: 40px
-        margin-left: 11px
-    & .u-text
-        color: white
-        margin: 0 0 0 45px
-        line-height: 20px
-    & .u-name
-        font-family: $font-Montserrat-Medium
-        font-size: 22px
-    & .u-type
-        font-family: $font-Montserrat-Regular
-        font-size: 20px
+    & .list-controls
+        margin-left: auto
+        display: flex
+        flex-direction: row
+        align-items: center
+        & #fileInputXlsx
+            display: none
+        & .upload-button
+            width: 30px
+            height: 26px
+            background-color: $color-dark
+            border-radius: 40px
+            border: 4px solid $color-dark
+            transition: 0.1s
+            cursor: pointer
+            padding-bottom: 4px
+            &:hover
+                transform: translateY(-3px)
+                box-shadow: 0px 1px 0px $color-gray
+            &:active
+                transform: translateY(0)
+                box-shadow: 0 0
+        & .button-create
+            margin-left: 15px
+            width: 165px
+            height: 34px
+            border-radius: 15px
+            background: $color-dark
+            color: white
+            font-family: $font-Montserrat-Regular
+            font-size: 18px
+            display: flex
+            align-items: center
+            justify-content: center
+            transition: 0.1s
+            cursor: pointer
+            &:hover
+                transform: translateY(-3px)
+                box-shadow: 0px 1px 0px $color-gray
+            &:active
+                transform: translateY(0)
+                box-shadow: 0 0
+    .not-enought
+        height: 70px
+        width: 100%
+        background: $color-dark
+        border-radius: 15px
+        margin: 8px 0
+        display: flex
+        flex-direction: row
+        align-items: center
+        transition: transform 0.2s
+        cursor: pointer
+        &:hover
+            transform: scale(1.01)
+        & .u-picture
+            height: 58px
+            width: 58px
+            border-radius: 40px
+            margin-left: 11px
+        & .u-text
+            color: white
+            margin: 0 0 0 45px
+            line-height: 20px
+        & .u-name
+            font-family: $font-Montserrat-Medium
+            font-size: 22px
+        & .u-type
+            font-family: $font-Montserrat-Regular
+            font-size: 20px
 #LK .mib
     position: fixed
     left: 0
@@ -415,7 +437,7 @@ header #UserHeader .user-header-more a
         border-bottom: 2px solid $color-light
         & .tab
             border: none
-            border-radius: 0
+            border-radius: 5px 5px 0 0
             outline: none
             cursor: pointer
             padding: 5px 12px
@@ -423,11 +445,11 @@ header #UserHeader .user-header-more a
             font-size: 17px
             font-family: $font-Montserrat-Medium
             color: $color-gray
-        & .tab-main, .tab-tripParticipants
+        & .tab-main
             background-color: $color-light
-        & .tab-passport, .tab-tripRoute
+        & .tab-passport, .tab-tripRoute, .tab-tripParticipants
             background-color: $color-dark
-    & #tabPassportContent, #tabRouteContent
+    & #tabPassportContent, #tabRouteContent, #tabParticipantsContent
         display: none
 #LK .create-new .input-block .text-input
     flex: auto

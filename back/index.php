@@ -38,6 +38,12 @@ function sortingHat($conn, $r) {
             return getCategories($conn, $r["data"]);
         case "createClient":
             return createClient($conn, $r["data"]);
+        case "updateClient":
+            return updateClient($conn, $r["data"]);
+        case "createBranch":
+            return createBranch($conn, $r["data"]);
+        case "updateBranch":
+            return updateBranch($conn, $r["data"]);
         default:
             return array(
                 "success" => false,
@@ -80,6 +86,12 @@ function sorter($conn, $method, $data, $files=array()) {
             return getCategories($conn, $data);
         case "createClient":
             return createClient($conn, $data);
+        case "updateClient":
+            return updateClient($conn, $data);
+        case "createBranch":
+            return createBranch($conn, $data);
+        case "updateBranch":
+            return updateBranch($conn, $data);
         default:
             return array(
                 "success" => false,

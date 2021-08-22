@@ -39,30 +39,17 @@ function getkey($key) {
             return false;
     }
 }
-function getkeyClients($key) {
-    switch ($key) {
-        case "id":
-            return 0;
-        case "fio":
-            return 1;
-        case "name":
-            return 2;
-        case "passport_series":
-            return 3;
-        case "passport_number":
-            return 4;
-        case "issue_date":
-            return 5;
-        case "issuing_authority":
-            return 6;
-        case "status":
-            return 7;
-        case "bdate":
-            return 8;
-        default:
-            return false;
-    }
-}
+$__keysClient = array(
+    'id' => 0,
+    'fio' => 1,
+    'name' => 2,
+    'passport_series' => 3,
+    'passport_number' => 4,
+    'issue_date' => 5,
+    'issuing_authority' => 6,
+    'status' => 7,
+    'bdate' => 8
+);
 function getkeyContracts($key) {
     switch ($key) {
         case "id":

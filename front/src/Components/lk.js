@@ -74,19 +74,19 @@ class LK extends Component {
                     type: String
                 },
                 'PSERIES': {
-                    prop: 'passportSeries',
+                    prop: 'passport_series',
                     type: Number
                 },
                 'PNUMBER': {
-                    prop: 'passportNumber',
+                    prop: 'passport_number',
                     type: Number
                 },
                 'ISSUEDATE': {
-                    prop: 'issueDate',
+                    prop: 'issue_date',
                     type: Date
                 },
-                'ISSUINGAUTHORITY': {
-                    prop: 'issuingAuthority',
+                'issuing_authority': {
+                    prop: 'issuing_authority',
                     type: String
                 }
             });
@@ -111,10 +111,16 @@ class LK extends Component {
             let __think = (t, u) => {
                 switch (t) {
                     case 'clients':
+                        let __status = u.status === '0' ? 'Обычный' : u.status === '1' ? 'Привелигированный' : u.status === '2' ? 'VIP' : '';
+                        console.log(u);
                         return (
                             <div className='not-enought' onClick={() => {
-                                this.showCreatePanel(1, l, { id: u.id, name: u.name });
+                                this.showCreatePanel(1, l, { id: u.id, name: u.name, fio: u.fio, bdate: u.bdate, issue_date: u.issue_date, issuing_authority: u.issuing_authority, passport_number: u.passport_number, passport_series: u.passport_series, status: u.status});
                             }}>
+                                <div className='u-info-nt'>
+                                    <p className='u-name u-text'>{u.fio}</p>
+                                    <p className='u-type u-text'>{__status}</p>
+                                </div>
                             </div>
                         );
                     case 'contracts':
@@ -155,7 +161,7 @@ class LK extends Component {
                     case 'branches':
                         return (
                             <div className='not-enought' onClick={() => {
-                                this.showCreatePanel(1, l, { id: u.id, type: u.name });
+                                this.showCreatePanel(1, l, { id: u.id, name: u.name });
                                 }}>
                                 <div className='u-info-nt'>
                                     <p className='u-name u-text'>{u.name}</p>
@@ -322,14 +328,14 @@ class LK extends Component {
                         </div>
                         <div id='tabPassportContent' className='tab-content'>
                             <div className='input-number input-row'> 
-                                <p> Серия </p> <input id='inputPassportSeries' type='number' defaultValue={params.passportSeries ? params.passportSeries : ''} />
-                                <p> Номер </p> <input id='inputPassportNumber' type='number' defaultValue={params.passportNumber ? params.passportNumber : ''} />
+                                <p> Серия </p> <input id='inputpassport_series' type='number' defaultValue={params.passport_series ? params.passport_series : ''} />
+                                <p> Номер </p> <input id='inputpassport_number' type='number' defaultValue={params.passport_number ? params.passport_number : ''} />
                             </div>
                             <div className='input-date input-row'> 
-                                <p> Дата выдачи </p> <input id='inputPassportIssue' type='date' defaultValue={params.issueDate ? params.issueDate : ''} />
+                                <p> Дата выдачи </p> <input id='inputPassportIssue' type='date' defaultValue={params.issue_date ? params.issue_date : ''} />
                             </div>
                             <div className='input-text input-row'> 
-                                <p> Орган, выдавший документ </p> <input id='inputAuthority' type='text' defaultValue={params.issuingAuthority ? params.issuingAuthority : ''} />
+                                <p> Орган, выдавший документ </p> <input id='inputAuthority' type='text' defaultValue={params.issuing_authority ? params.issuing_authority : ''} />
                             </div>
                         </div>
                     </>, 350, action === 0 ? 'Добавление клиента' : ''];
@@ -420,7 +426,7 @@ class LK extends Component {
                         <div className='input-name input-row'> 
                             <p> Название </p> <input id='inputName' type='text' defaultValue={params.name ? params.name : ''} />
                         </div>
-                    </>, 180, action === 0 ? 'Создание филиала' : params.type];
+                    </>, 180, action === 0 ? 'Создание филиала' : params.name];
                 default:
                     return [<></>, 0, '']
             }
@@ -453,8 +459,20 @@ class LK extends Component {
                             let __doSomething = (t) => {
                                 let __currData = {};
                                 let __query = {};
+                                let __emptyCheck = (keys) => {
+                                    let __what = true;
+                                    keys.forEach(key => {
+                                        if (document.getElementById(key).value == '') {
+                                            __what = false;
+                                            document.getElementById(key).style.backgroundColor = 'rgba(255, 0, 0, .1)';
+                                        } else 
+                                            document.getElementById(key).style.backgroundColor = '';
+                                    });
+                                    return __what;
+                                };
                                 switch (t) {
                                     case 'users':
+                                        if (!__emptyCheck(['inputName', 'inputFIO', 'inputBDate'])) return;
                                         __currData = {
                                             name: document.getElementById("inputName").value,
                                             fio: document.getElementById("inputFIO").value,
@@ -485,30 +503,30 @@ class LK extends Component {
                                             });
                                         }
                                         return;
-                                    case 'clients': 
+                                    case 'clients':
+                                        if (!__emptyCheck(['inputName', 'inputFIO', 'inputBDate', 'inputpassport_series', 'inputpassport_number', 'inputPassportIssue', 'inputAuthority', 'selectStatus'])) return;
                                         __currData = {
                                             fio: document.getElementById("inputFIO").value,
                                             name: document.getElementById("inputName").value,
-                                            passport_series: document.getElementById("inputPassportSeries").value,
-                                            passport_number: document.getElementById("inputPassportNumber").value,
+                                            passport_series: document.getElementById("inputpassport_series").value,
+                                            passport_number: document.getElementById("inputpassport_number").value,
                                             issue_date: document.getElementById("inputPassportIssue").value,
                                             issuing_authority: document.getElementById("inputAuthority").value,
                                             status: document.getElementById("selectStatus").value,
                                             bdate: document.getElementById("inputBDate").value,
                                         };
                                         if (this.state.currCP.action === 1) { // update
-                                            /*let __originalData = this.state.currCP.data;
+                                            let __originalData = this.state.currCP.data;
                                             Object.keys(__originalData).map(key => {
-                                                if (__currData[key] !== __originalData[key] && key !== 'id') 
-                                                    if (key == 'status') __query[key] = +__currData[key] + 1;
+                                                if (__currData[key] !== __originalData[key] && key !== 'id'){
+                                                    __query[key] = __currData[key];
+                                                }
                                             });
                                             if (__query !== {}) 
-                                                uploadFiles('updateUserInfo', { token: getToken(), id: __originalData.id, keys: __query }, [__currData.photo ? __currData.photo : undefined]).then(res => {
+                                                request('updateClient', { token: getToken(), id: __originalData.id, keys: __query }).then(res => {
                                                     this.update(this.state.currCP.type);
-                                                    this.showCreatePanel(1, this.state.currCP.type, Object.assign(__currData, {
-                                                        id: __originalData.id, photo: __currData.photo ? window.URL.createObjectURL(__currData.photo) : __originalData.photo
-                                                    }));
-                                                });*/
+                                                    this.showCreatePanel(1, this.state.currCP.type, Object.assign(__currData, { id: __originalData.id }));
+                                                });
                                         } else if (this.state.currCP.action === 0) { // create
                                             Object.keys(__currData).map(key => {
                                                 if (key !== 'photo') __query[key] = __currData[key];
@@ -524,6 +542,25 @@ class LK extends Component {
                                     case 'payments':
                                         return;
                                     case 'usertypes':
+                                        return;
+                                    case 'branches':
+                                        if (!__emptyCheck(['inputName'])) return;
+                                        __currData = {
+                                            name: document.getElementById('inputName').value
+                                        };
+                                        if (this.state.currCP.action === 1) { // update
+                                            let __originalData = this.state.currCP.data;
+                                            if (__currData.name !== __originalData.name)
+                                                request('updateBranch', { token: getToken(), id: __originalData.id, name: __currData.name}).then(res => {
+                                                    this.update(this.state.currCP.type);
+                                                    this.showCreatePanel(1, this.state.currCP.type, Object.assign(__currData, { id: __originalData.id }));
+                                                });
+                                        } else if (this.state.currCP.action === 0) { // create
+                                            request('createBranch', { token: getToken(), name: __currData.name}).then(res => {
+                                                this.update(this.state.currCP.type);
+                                                this.mib();
+                                            });
+                                        }
                                         return;
                                     default:
                                         return;

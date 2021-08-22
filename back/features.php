@@ -77,6 +77,7 @@ function getEmployees($conn, $data) {
 
 function getListOf($conn, $data) {
     global $permissions;
+    global $__keysClient;
     $__data = array(
         "success" => false,
         "data" => array()
@@ -113,17 +114,9 @@ function getListOf($conn, $data) {
             case 'clients':
                 $clients = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `clients`"));
                 foreach ($clients as $client) {
-                    array_push($__data["data"]['list'], array(
-                        "id" => $client[getkeyClients("id")],
-                        "name" => $client[getkeyClients("name")],
-                        "fio" => $client[getkeyClients("fio")],
-                        "passport_series" => $client[getkeyClients("passport_series")],
-                        "passport_number" => $client[getkeyClients("passport_number")],
-                        "issue_date" => $client[getkeyClients("issue_date")],
-                        "expiration_date" => $client[getkeyClients("expiration_date")],
-                        "issuing_authority" => $client[getkeyClients("issuing_authority")],
-                        "status" => $client[getkeyClients("status")]
-                    ));
+                    $__newList = array();
+                    foreach ($__keysClient as $keyName => $key) $__newList[$keyName] = $client[$key];
+                    array_push($__data['data']['list'], $__newList);
                 }
                 return $__data;
             case 'contracts':
@@ -164,6 +157,7 @@ function getListOf($conn, $data) {
                         "permissions" => $utype[2]
                     ));
                 }
+                return $__data;
             case 'branches':
                 $branches = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `branches`"));
                 foreach ($branches as $branch) {
@@ -210,15 +204,12 @@ function createClient($conn, $data) {
             'bdate' => array_key_exists('bdate', $__client) ? $__client['bdate'] : NULL
         );
         $__qString = "INSERT INTO `clients`(`fio`, `name`, `passport_series`, `passport_number`, `issue_date`, `issuing_authority`, `status`, `bdate`) VALUES (\"{$__query['fio']}\", \"{$__query['name']}\", \"{$__query['passport_series']}\", \"{$__query['passport_number']}\", \"{$__query['issue_date']}\", \"{$__query['issuing_authority']}\", \"{$__query['status']}\", \"{$__query['bdate']}\")";
-        echo $__qString;
         if (mysqli_query($conn, $__qString))
                     return true;
         else return false;
     }
     if (isAllowedT($conn, $data['token'], 'clients')) {
-        var_dump($data);
         if (array_key_exists('client', $data)) {
-            echo 'client';
             $__data['success'] = __create($conn, $data['client']);
         } elseif (array_key_exists('clients', $data)) {
             foreach ($data['clients'] as $client) {
@@ -226,6 +217,41 @@ function createClient($conn, $data) {
             }
         }
     }
+    return $__data;
+}
+function updateClient($conn, $data) {
+    $__data = array( 'success' => false );
+    if ($data['id'] == 0) return $__data;
+    $__query = '';
+    if (isAllowedT($conn, $data['token'], 'clients')) {
+        $__counter = 1;
+        $__total = count($data['keys']);
+        foreach ($data['keys'] as $key => $value) {
+            $__query .= "`{$key}` = '{$value}'".(($__counter < $__total) ? ', ' : '');
+            $__counter += 1;
+        }
+        if ($__query != '' and mysqli_query($conn, "UPDATE `clients` SET {$__query} WHERE `clients`.`id` = {$data['id']}"))
+            $__data['success'] = true;
+    }
+    return $__data;
+}
+
+function createBranch($conn, $data) {
+    $__data = array( 'success' => false );
+    function __create($conn, $__name) {
+        $__qString = "INSERT INTO `branches`(`name`) VALUES (\"{$__name}\")";
+        if (mysqli_query($conn, $__qString)) return true;
+        else return false;
+    }
+    if (isAllowedT($conn, $data['token'], 'branches'))
+        $__data['success'] = __create($conn, $data['name']);
+    return $__data;
+}
+function updateBranch($conn, $data) {
+    $__data = array( 'success' => false );
+    if ($data['id'] == 0) return $__data;
+    if (isAllowedT($conn, $data['token'], 'branches') and mysqli_query($conn, "UPDATE `branches` SET `name` = '{$data['name']}' WHERE `branches`.`id` = {$data['id']}"))
+        $__data['success'] = true;
     return $__data;
 }
 ?>

@@ -4,7 +4,7 @@ require_once 'users.php';
 require_once 'features.php';
 require_once 'globals.php';
 
-function sortingHat($conn, $r) {
+/*function sortingHat($conn, $r) {
     switch ($r["method"]) {
         case "login":
             return login($conn, $r["data"]);
@@ -44,15 +44,17 @@ function sortingHat($conn, $r) {
             return createBranch($conn, $r["data"]);
         case "updateBranch":
             return updateBranch($conn, $r["data"]);
+        case "getBranches":
+            return getBranches($conn, $r["data"]);
         default:
             return array(
                 "success" => false,
                 "error" => "Wrong method"
             );
     }
-}
+}*/
 
-function sorter($conn, $method, $data, $files=array()) {
+function sortingHat($conn, $method, $data, $files=array()) {
     switch ($method) {
         case "login":
             return login($conn, $data);
@@ -92,6 +94,12 @@ function sorter($conn, $method, $data, $files=array()) {
             return createBranch($conn, $data);
         case "updateBranch":
             return updateBranch($conn, $data);
+        case "getBranches":
+            return getBranches($conn, $data);
+        case "createType":
+            return createType($conn, $data);
+        case "updateType":
+            return updateType($conn, $data);
         default:
             return array(
                 "success" => false,
@@ -112,7 +120,7 @@ if (array_key_exists('multi', $_POST) and $_POST['multi'] == true) { // methods 
         return $__data;
     }
     foreach ($MAD as $method => $data) {
-        $__data['result'][$method] = sorter($connect, $method, array_merge($data, $Gdata));
+        $__data['result'][$method] = sortingHat($connect, $method, array_merge($data, $Gdata));
     }
     $__data['success'] = true;
     echo json_encode($__data);
@@ -122,6 +130,6 @@ if (array_key_exists('multi', $_POST) and $_POST['multi'] == true) { // methods 
         "data" => array_key_exists("data", $_POST) ? json_decode($_POST["data"], true) : array(),
         "files" => $_FILES ? $_FILES : array()
     );
-    echo json_encode(sortingHat($connect, $res));
+    echo json_encode(sortingHat($connect, $res['method'], $res['data'], $res['files']));
 }
 ?>

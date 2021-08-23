@@ -107,6 +107,7 @@ function getListOf($conn, $data) {
                         "typeid" => $user[getkey("type")],
                         "type" => $__types[$user[getkey("type")] - 1]["type"],
                         "bdate" => $user[getkey("bdate")],
+                        "branch" => $user[getkey("branch")],
                         "photo" => "http://dream/profilepictures/{$user[getkey("photo")]}"
                     ));
                 }
@@ -180,10 +181,26 @@ function getTypes($conn, $data) {
             "types" => array()
         )
     );
-    if (isAllowed($conn, $data["token"], $permissions["getTypes"])) {
+    if (isAllowedT($conn, $data['token'], 'types')) {
         $types = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `usertypes`"));
         $__data["success"] = true;
         foreach ($types as $type) { array_push($__data["data"]["types"], $type[1]); }
+    }
+    return $__data;
+}
+
+function getBranches($conn, $data) {
+    global $permissions;
+    $__data = array(
+        "success" => false,
+        "data" => array(
+            "branches" => array()
+        )
+    );
+    if (isAllowedT($conn, $data['token'], 'branches')) {
+        $branches = mysqli_fetch_all(mysqli_query($conn, "SELECT * FROM `branches`"));
+        $__data["success"] = true;
+        foreach ($branches as $branch) { array_push($__data['data']['branches'], $branch[1]); }
     }
     return $__data;
 }
@@ -205,7 +222,7 @@ function createClient($conn, $data) {
         );
         $__qString = "INSERT INTO `clients`(`fio`, `name`, `passport_series`, `passport_number`, `issue_date`, `issuing_authority`, `status`, `bdate`) VALUES (\"{$__query['fio']}\", \"{$__query['name']}\", \"{$__query['passport_series']}\", \"{$__query['passport_number']}\", \"{$__query['issue_date']}\", \"{$__query['issuing_authority']}\", \"{$__query['status']}\", \"{$__query['bdate']}\")";
         if (mysqli_query($conn, $__qString))
-                    return true;
+            return true;
         else return false;
     }
     if (isAllowedT($conn, $data['token'], 'clients')) {
@@ -213,7 +230,17 @@ function createClient($conn, $data) {
             $__data['success'] = __create($conn, $data['client']);
         } elseif (array_key_exists('clients', $data)) {
             foreach ($data['clients'] as $client) {
-                $__data['success'] = __create($conn, $client);
+                $__fioArr = explode(' ', $client['fio']);
+                $__data['success'] = __create($conn, array(
+                    'fio' => $__fioArr[0].' '.substr($__fioArr[1], 0, 2).'. '.substr($__fioArr[2], 0, 2).'.',
+                    'name' => $client['fio'],
+                    'passport_series' => array_key_exists('passport_series', $client) ? $client['passport_series'] : NULL,
+                    'passport_number' => array_key_exists('passport_number', $client) ? $client['passport_number'] : NULL,
+                    'issue_date' => array_key_exists('issue_date', $client) ? $client['issue_date'] : NULL,
+                    'issuing_authority' => array_key_exists('issuing_authority', $client) ? $client['issuing_authority'] : NULL,
+                    'status' => array_key_exists('status', $client) ? $client['status'] : NULL,
+                    'bdate' => array_key_exists('bdate', $client) ? $client['bdate'] : NULL
+                ));
             }
         }
     }
@@ -251,6 +278,25 @@ function updateBranch($conn, $data) {
     $__data = array( 'success' => false );
     if ($data['id'] == 0) return $__data;
     if (isAllowedT($conn, $data['token'], 'branches') and mysqli_query($conn, "UPDATE `branches` SET `name` = '{$data['name']}' WHERE `branches`.`id` = {$data['id']}"))
+        $__data['success'] = true;
+    return $__data;
+}
+
+function createType($conn, $data) {
+    $__data = array( 'success' => false );
+    function __create($conn, $__name) {
+        $__qString = "INSERT INTO `branches`(`type`) VALUES (\"{$__name}\")";
+        if (mysqli_query($conn, $__qString)) return true;
+        else return false;
+    }
+    if (isAllowedT($conn, $data['token'], 'branches'))
+        $__data['success'] = __create($conn, $data['name']);
+    return $__data;
+}
+function updateType($conn, $data) {
+    $__data = array( 'success' => false );
+    if ($data['id'] == 0) return $__data;
+    if (isAllowedT($conn, $data['token'], 'usertypes') and mysqli_query($conn, "UPDATE `usertypes` SET `type` = '{$data['name']}' WHERE `usertypes`.`id` = {$data['id']}"))
         $__data['success'] = true;
     return $__data;
 }

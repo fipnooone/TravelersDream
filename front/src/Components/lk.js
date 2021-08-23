@@ -11,6 +11,7 @@ class LK extends Component {
             blocks: {
                 categories: [],
                 types: [],
+                branches: [],
                 list: [],
                 createNewPanel: <div id='LKMIB-CNew' className='create-new'> </div>,
                 inputXlsx: <></>
@@ -50,46 +51,95 @@ class LK extends Component {
 
     uploadXlsx(l, file) {
         let __schema = {};
-        let __read = (s) => {
-            readXlsx(file, s).then((rows) => {
-                console.log(rows);
-            });
-        };
-        if (l === 'users')
-            __read({
-
-            });
-        else if (l === 'clients')
-            __read({
-                'FIO': {
+        if (l === 'users') {
+            let schema = {
+                'ФИО': {
                     prop: 'fio',
-                    type: String
+                    type: String,
+                    required: true
                 },
-                'BIRTHDAY': {
+                'Дата рождения': {
                     prop: 'bdate',
-                    type: Date
+                    type: (v) => {
+                        return `${v.getFullYear()}-${v.getMonth()+1}-${v.getDate()}`;
+                    }
                 },
-                'STATUS': {
+                'Тип': {
+                    prop: 'type',
+                    type: (v) => {
+                        switch (v) {
+                            case 'Агент':
+                                return 3;
+                            case 'Менеджер':
+                                return 2;
+                            case 'Бухгалтер':
+                                return 4;
+                            case 'Администратор':
+                                return 1;
+                        }
+                    }                
+                },
+                'Филиал': {
+                    prop: 'branch',
+                    type: Number
+                }
+            };
+            readXlsx(file, { schema }).then(({ rows, errors }) => {
+                request('createUser', {token: getToken(), users: rows}).then(res => {
+                    if (res.success) this.update(this.state.currList);
+                });
+            });
+        } else if (l === 'clients') {
+            let schema = {
+                'ФИО': {
+                    prop: 'fio',
+                    type: String,
+                    required: true
+                },
+                'Дата рождения': {
+                    prop: 'bdate',
+                    type: (v) => {
+                        return `${v.getFullYear()}-${v.getMonth()+1}-${v.getDate()}`;
+                    }
+                },
+                'Статус': {
                     prop: 'status',
-                    type: String
+                    type: (v) => {
+                        switch (v) {
+                            case 'Обычный':
+                                return 0;
+                            case 'Привилегированный':
+                                return 1;
+                            case 'VIP':
+                                return 2;
+                        }
+                    }                
                 },
-                'PSERIES': {
+                'Серия': {
                     prop: 'passport_series',
                     type: Number
                 },
-                'PNUMBER': {
+                'Номер': {
                     prop: 'passport_number',
                     type: Number
                 },
-                'ISSUEDATE': {
+                'Дата выдачи': {
                     prop: 'issue_date',
-                    type: Date
+                    type: (v) => {
+                        return `${v.getFullYear()}-${v.getMonth()+1}-${v.getDate()}`;
+                    }
                 },
-                'issuing_authority': {
+                'Орган, выдавший документ': {
                     prop: 'issuing_authority',
                     type: String
                 }
+            };
+            readXlsx(file, { schema }).then(({ rows, errors }) => {
+                request('createClient', {token: getToken(), clients: rows}).then(res => {
+                    if (res.success) this.update(this.state.currList);
+                });
             });
+        }
     }
 
     setListOf(l) {
@@ -100,7 +150,7 @@ class LK extends Component {
                 this.setBlocks({
                     inputXlsx: <>
                         <input id="fileInputXlsx" type="file" accept=".xlsx" onChange={(e) => {
-                            this.uploadXlsx(this.currList, e.target.files[0]);
+                            this.uploadXlsx(this.state.currList, e.target.files[0]);
                         }} />
                         <svg className='upload-button svg-icon' viewBox='0 0 20 20' onClick={() => document.getElementById("fileInputXlsx").click()}>
                             <path fill='#fff' d="M8.416,3.943l1.12-1.12v9.031c0,0.257,0.208,0.464,0.464,0.464c0.256,0,0.464-0.207,0.464-0.464V2.823l1.12,1.12c0.182,0.182,0.476,0.182,0.656,0c0.182-0.181,0.182-0.475,0-0.656l-1.744-1.745c-0.018-0.081-0.048-0.16-0.112-0.224C10.279,1.214,10.137,1.177,10,1.194c-0.137-0.017-0.279,0.02-0.384,0.125C9.551,1.384,9.518,1.465,9.499,1.548L7.76,3.288c-0.182,0.181-0.182,0.475,0,0.656C7.941,4.125,8.234,4.125,8.416,3.943z M15.569,6.286h-2.32v0.928h2.32c0.512,0,0.928,0.416,0.928,0.928v8.817c0,0.513-0.416,0.929-0.928,0.929H4.432c-0.513,0-0.928-0.416-0.928-0.929V8.142c0-0.513,0.416-0.928,0.928-0.928h2.32V6.286h-2.32c-1.025,0-1.856,0.831-1.856,1.856v8.817c0,1.025,0.832,1.856,1.856,1.856h11.138c1.024,0,1.855-0.831,1.855-1.856V8.142C17.425,7.117,16.594,6.286,15.569,6.286z" />
@@ -111,8 +161,7 @@ class LK extends Component {
             let __think = (t, u) => {
                 switch (t) {
                     case 'clients':
-                        let __status = u.status === '0' ? 'Обычный' : u.status === '1' ? 'Привелигированный' : u.status === '2' ? 'VIP' : '';
-                        console.log(u);
+                        let __status = u.status === '0' ? 'Обычный' : u.status === '1' ? 'Привилегированный' : u.status === '2' ? 'VIP' : '';
                         return (
                             <div className='not-enought' onClick={() => {
                                 this.showCreatePanel(1, l, { id: u.id, name: u.name, fio: u.fio, bdate: u.bdate, issue_date: u.issue_date, issuing_authority: u.issuing_authority, passport_number: u.passport_number, passport_series: u.passport_series, status: u.status});
@@ -140,7 +189,7 @@ class LK extends Component {
                     case 'users':
                         return (
                         <div className='not-enought' onClick={() => {
-                            this.showCreatePanel(1, l, { id: u.id, name: u.name, fio: u.fio, bdate: u.bdate, type: u.typeid - 1, photo: u.photo });
+                            this.showCreatePanel(1, l, { id: u.id, name: u.name, fio: u.fio, bdate: u.bdate, type: u.typeid - 1, branch: u.branch - 1, photo: u.photo });
                         }}>
                             <img className='u-picture' src={u.photo} alt='' />
                             <div className='u-info-nt'>
@@ -199,6 +248,7 @@ class LK extends Component {
         requests({
             'getUserInfo': {keys: ['name', 'photo']},
             'getTypes': {},
+            'getBranches': {},
             'getCategories': {}
         }, { 'token': getToken() }).then(res => {
             if (res.success) {
@@ -220,6 +270,16 @@ class LK extends Component {
                         __counter ++;
                     });
                     this.setBlocks({types:  __types})
+                }
+
+                if (data.getBranches.success) { // getBranches
+                    let __branches = [];
+                    let __counter = 0;
+                    data.getBranches.data.branches.map(branch => {
+                        __branches.push( <option value={__counter}> {branch} </option> );
+                        __counter ++;
+                    });
+                    this.setBlocks({branches: __branches});
                 }
 
                 if (data.getCategories.success) { // getCategories
@@ -281,7 +341,7 @@ class LK extends Component {
                             <p> Дата рождения </p> <input id="inputBDate" type="date" defaultValue={params.bdate ? params.bdate : ''} />
                         </div>
                         <div className="input-type input-row">
-                            <p> Филиал </p> <select id="selectBranch" defaultValue={params.branch ? params.branch : 0}> {/*this.state.blocks.branch*/} </select>
+                            <p> Филиал </p> <select id="selectBranch" defaultValue={params.branch ? params.branch : 0} > {this.state.blocks.branches} </select>
                         </div>
                         <div className="input-type input-row">
                             <p> Тип </p> <select id="selectType" defaultValue={params.type ? params.type : 0}> {this.state.blocks.types} </select>
@@ -321,7 +381,7 @@ class LK extends Component {
                             <div className='input-type input-row'>
                                 <p> Статус </p> <select id="selectStatus" defaultValue={params.status ? params.status : 0}>
                                     <option value={0}>Обычный</option>
-                                    <option value={1}>Привелигированный</option>
+                                    <option value={1}>Привилегированный</option>
                                     <option value={2}>VIP</option>
                                 </select>
                             </div>
@@ -375,7 +435,7 @@ class LK extends Component {
                                 <p> Соглашение </p> <input id='inputContract' type='text' defaultValue={params.contract ? params.contract : ''} />
                             </div>
                             <div className='input-text input-row'> 
-                                <p> Организация </p> <input id='inputOrganization' type='text' defaultValue={params.organization ? params.organization : ''} />
+                                <p> Организация </p> <select id='inputOrganization' type='text' defaultValue={params.organization ? params.organization : ''} > {this.state.blocks.branches} </select>
                             </div>
                             <div className='input-text input-row'> 
                                 <p> Агент </p> <input id='inputExecutor' type='text' defaultValue={params.executor ? params.executor : ''} />
@@ -417,10 +477,10 @@ class LK extends Component {
                         <div className='input-name input-row'> 
                             <p> Тип </p> <input id='inputName' type='text' defaultValue={params.type ? params.type : ''} />
                         </div>
-                        <div className="input-type input-row">
-                            <p> Разрешения </p> <select id="selectType" defaultValue={0}> </select>
-                        </div>
                     </>, 230, action === 0 ? 'Создание типа пользователей' : params.type];
+                    /*<div className="input-type input-row">
+                        <p> Разрешения </p> <select id="selectType" defaultValue={[]} multiple> </select>
+                    </div>*/
                 case 'branches':
                     return [<>
                         <div className='input-name input-row'> 
@@ -478,13 +538,16 @@ class LK extends Component {
                                             fio: document.getElementById("inputFIO").value,
                                             bdate: document.getElementById("inputBDate").value,
                                             type: document.getElementById("selectType").value,
+                                            branch: document.getElementById("selectBranch").value,
                                             photo: this.state.currCP.photo
                                         };
                                         if (this.state.currCP.action === 1) { // update
                                             let __originalData = this.state.currCP.data;
+                                            
                                             Object.keys(__originalData).map(key => {
-                                                if (__currData[key] !== __originalData[key] && key !== 'photo' && key !== 'id') 
-                                                    if (key == 'type') __query[key] = +__currData[key] + 1;
+                                                if (__currData[key] != __originalData[key] && key !== 'photo' && key !== 'id') 
+                                                    if (key == 'type' || key == 'branch') __query[key] = +__currData[key] + 1;
+                                                    else __query[key] = __currData[key];
                                             });
                                             if (__query !== {}) 
                                                 uploadFiles('updateUserInfo', { token: getToken(), id: __originalData.id, keys: __query }, [__currData.photo ? __currData.photo : undefined]).then(res => {
@@ -495,7 +558,8 @@ class LK extends Component {
                                                 });
                                         } else if (this.state.currCP.action === 0) { // create
                                             Object.keys(__currData).map(key => {
-                                                if (key !== 'photo') __query[key] = __currData[key];
+                                                if (key == 'type' || key == 'branch') __query[key] = +__currData[key] + 1;
+                                                else if (key !== 'photo') __query[key] = __currData[key];
                                             });
                                             uploadFiles("createUser", {token: getToken(), keys: __query}, [__currData.photo ? __currData.photo : undefined]).then( res => {
                                                 this.update(this.state.currCP.type);
@@ -542,6 +606,23 @@ class LK extends Component {
                                     case 'payments':
                                         return;
                                     case 'usertypes':
+                                        if (!__emptyCheck(['inputName'])) return;
+                                        __currData = {
+                                            name: document.getElementById('inputName').value
+                                        };
+                                        if (this.state.currCP.action === 1) { // update
+                                            let __originalData = this.state.currCP.data;
+                                            if (__currData.name !== __originalData.name)
+                                                request('updateType', { token: getToken(), id: __originalData.id, name: __currData.name}).then(res => {
+                                                    this.update(this.state.currCP.type);
+                                                    this.showCreatePanel(1, this.state.currCP.type, Object.assign({ id: __originalData.id, type: __currData.name }));
+                                                });
+                                        } else if (this.state.currCP.action === 0) { // create
+                                            request('createType', { token: getToken(), name: __currData.name}).then(res => {
+                                                this.update(this.state.currCP.type);
+                                                this.mib();
+                                            });
+                                        }
                                         return;
                                     case 'branches':
                                         if (!__emptyCheck(['inputName'])) return;

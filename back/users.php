@@ -162,11 +162,57 @@ function updateUserInfo($conn, $data, $files) {
 }
 
 function createUser($conn, $data, $files) {
-    global $permissions;
+    //global $permissions;
     $__data = array(
         "success" => false
     );
-    $query = array(
+    function __create($conn, $__user, $__files) {
+        $__query = array(
+            'fio' => array_key_exists('fio', $__user) ? $__user['fio'] : NULL,
+            'name' => array_key_exists('name', $__user) ? $__user['name'] : NULL,
+            'type' => array_key_exists('type', $__user) ? $__user['type'] : NULL,
+            'bdate' => array_key_exists('bdate', $__user) ? $__user['bdate'] : NULL,
+            'branch' => array_key_exists('branch', $__user) ? $__user['branch'] : NULL,
+            'photo' => array_key_exists('photo', $__user) ? $__user['photo'] : NULL
+        );
+        $randname = transliterate(str_replace(' ', '-', $__user["fio"])).'-'.generateRandomString(5);
+        if (array_key_exists("files", $__files)) {
+            $ext = preg_replace("/(.*)\/(?:)/", '', $__files['files']['type'][0]);
+            $__query['photo'] = "{$randname}.{$ext}";
+            move_uploaded_file(
+                $files["files"]['tmp_name'][0], 
+                $_SERVER['DOCUMENT_ROOT'] . "/profilepictures/{$randname}.{$ext}"
+            );
+        } else {
+            $__query['photo'] = '0.png';
+        }
+
+        $__qString = "INSERT INTO `users`(`name`, `fio`, `type`, `bdate`, `branch`, `photo`) VALUES (\"{$__query['name']}\", \"{$__query['fio']}\", \"{$__query['type']}\", \"{$__query['bdate']}\", \"{$__query['branch']}\", \"{$__query['photo']}\")";
+        if (mysqli_query($conn, $__qString))
+            return true;
+        else return false;
+    }
+    if (isAllowedT($conn, $data['token'], 'users')) {
+        if (array_key_exists('keys', $data)) {
+            $__data['success'] = __create($conn, $data['keys'], $files);
+        } elseif (array_key_exists('users', $data)) {
+            foreach ($data['users'] as $user) {
+                $__fioArr = explode(' ', $user['fio']);
+                $__data['success'] = __create($conn, array(
+                    'fio' => $__fioArr[0].' '.substr($__fioArr[1], 0, 2).'. '.substr($__fioArr[2], 0, 2).'.',
+                    'name' => $user['fio'],
+                    'type' => array_key_exists('type', $user) ? $user['type'] : NULL,
+                    'branch' => array_key_exists('branch', $user) ? $user['branch'] : NULL,
+                    'bdate' => array_key_exists('bdate', $user) ? $user['bdate'] : NULL
+                ), array());
+            }
+        }
+    }
+
+    return $__data;
+}
+
+/*$query = array(
         'name' => NULL,
         'fio' => NULL,
         'type' => NULL,
@@ -191,9 +237,7 @@ function createUser($conn, $data, $files) {
         } else {
             $query['photo'] = '0.png';
         }
-        if ($query != "" and mysqli_query($conn, "INSERT INTO `users`(`name`, `fio`, `type`, `bdate`, `photo`) VALUES (\"{$query['name']}\", \"{$query['fio']}\", \"{$query['type']}\", \"{$query['bdate']}\", \"{$query['photo']}\")"))
+        if ($query != "" and mysqli_query($conn, "INSERT INTO `users`(`name`, `fio`, `type`, `bdate`, `branch`, `photo`) VALUES (\"{$query['name']}\", \"{$query['fio']}\", \"{$query['type']}\", \"{$query['bdate']}\", \"{$query['branch']}\", \"{$query['photo']}\")"))
             $__data["success"] = true;
-    }
-    return $__data;
-}
+    }*/
 ?>

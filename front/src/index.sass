@@ -65,6 +65,17 @@ a
     text-decoration: none
 ul
     list-style: none
+table
+    font-family: $font-Montserrat-Regular
+    color: #e2e2e2
+    border-collapse: collapse
+    width: 100%
+td, th
+    border: 1px solid $color-light
+    text-align: center
+    padding: 8px
+.table-tr
+    height: 10px
 header
     margin-left: 18vw
     padding: 0 25px
@@ -266,7 +277,7 @@ header #UserHeader .user-header-more
     visibility: hidden
     background-color: $color-dark
     border-radius: 10px
-header #UserHeader .user-header-more a
+header #UserHeader .user-header-more p
     text-align: left
     cursor: pointer
     font-size: 16px
@@ -393,7 +404,7 @@ header #UserHeader .user-header-more a
 #LK .create-new
     position: fixed
     top: 290px
-    left: 31.25vw
+    left: calc( 50vw - 367.5px )
     width: 735px
     height: 320px
     background-color: $color-dark
@@ -494,8 +505,9 @@ header #UserHeader .user-header-more a
         cursor: pointer
         & option
             background-color: $color-light
-    & #inputPassportSeries, #inputDateStart
+    & #inputpassport_series
         margin-right: 10px
+
 .margin-top
     margin-top: 15px
 #LK .create-new .input-block .image-input-block
@@ -514,6 +526,30 @@ header #UserHeader .user-header-more a
     & #fileInput
         height: 0
         display: none
+.button-add-table
+    float: left
+    margin-top: 26px
+    border-radius: 15px
+    background: none
+    color: #e2e2e2
+    font-family: $font-Montserrat-Medium
+    font-size: 18px
+    border: 2px solid $color-light
+    height: 31px
+    width: 150px
+    cursor: pointer
+    transition: .2s
+    &:hover
+        transform: translateY(-2px)
+        box-shadow: 0px 1px 0px #e2e2e2
+    &:active
+        transform: translateY(0)
+        box-shadow: none
+.table-contracts
+    height: 295px
+.searchBox
+    width: 735px
+    height: 200px
 /* LK Block-End
 
 

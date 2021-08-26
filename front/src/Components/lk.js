@@ -14,7 +14,8 @@ class LK extends Component {
                 branches: [],
                 list: [],
                 createNewPanel: <div id='LKMIB-CNew' className='create-new'> </div>,
-                inputXlsx: <></>
+                inputXlsx: <></>,
+                searchBox: <></>
             },
             currCP: {
                 action: 3,
@@ -50,7 +51,6 @@ class LK extends Component {
     };
 
     uploadXlsx(l, file) {
-        let __schema = {};
         if (l === 'users') {
             let schema = {
                 'ФИО': {
@@ -76,6 +76,8 @@ class LK extends Component {
                                 return 4;
                             case 'Администратор':
                                 return 1;
+                            default:
+                                return 0;
                         }
                     }                
                 },
@@ -112,6 +114,8 @@ class LK extends Component {
                                 return 1;
                             case 'VIP':
                                 return 2;
+                            default:
+                                return 0;
                         }
                     }                
                 },
@@ -320,6 +324,15 @@ class LK extends Component {
         });
     };
 
+    showSearchBox(list) {
+        let __searchBox = (
+            <div className='searchBox'>
+                
+            </div>
+        )
+        this.setBlocks({searchBox: __searchBox});
+    }
+
     showCreatePanel(action, type, params) {
         this.setState({currCP: {action: action, type: type, data: params}});
         const __getInput = (t) => {
@@ -451,10 +464,38 @@ class LK extends Component {
                             </div>
                         </div>
                         <div id='tabParticipantsContent' className='tab-content'>
-                            test1
+                            <table className='table-contracts'>
+                                <tr className='table-tr'>
+                                    <th>№</th>
+                                    <th>ФИО</th>
+                                </tr>
+                                <tr className='table-tr-add'>
+                                    <th/>
+                                    <th/>
+                                </tr>
+                            </table>
+                            <button className='button-add-table' onClick={()=>this.showSearchBox()}>Добавить</button>
                         </div>
                         <div id='tabRouteContent' className='tab-content'>
-                            test2
+                            <table className='table-contracts'>
+                                <tr className='table-tr'>
+                                    <th>№</th>
+                                    <th>Город</th>
+                                    <th>Гостиница</th>
+                                    <th>Вид номера</th>
+                                    <th>Дата начала</th>
+                                    <th>Дата окончания</th>
+                                </tr>
+                                <tr className='table-tr-add'>
+                                    <th/>
+                                    <th/>
+                                    <th/>
+                                    <th/>
+                                    <th/>
+                                    <th/>
+                                </tr>
+                            </table>
+                            <button className='button-add-table'>Добавить</button>
                         </div>
                     </>, 480, action === 0 ? 'Создание договора' : ''];
                 case 'payments':
@@ -495,7 +536,7 @@ class LK extends Component {
         const __imageInput = (type === 'users') ? 
         <div className="image-input-block">
             <p className="image-title"> Фото </p>
-            <input id="imageInput" className="image-input" type="image" onClick={ () => document.getElementById("fileInput").click() } src={ params.photo ? params.photo : 'http://dream/profilepictures/0.png' }/>
+            <input id="imageInput" className="image-input" type="image" alt='' onClick={ () => document.getElementById("fileInput").click() } src={ params.photo ? params.photo : 'http://dream/profilepictures/0.png' }/>
             <input id="fileInput" type="file" accept="image/png, image/jpeg" onChange={(e) => {
                 this.setState((prevState) => {
                     return { currCP: Object.assign(prevState.currCP, {photo: e.target.files[0]}) };
@@ -505,6 +546,7 @@ class LK extends Component {
         </div> : <></>;
 
         let __newCP = (
+            <>
             <div id='LKMIB-CNew' className='create-new' style={{height: __height}}>
                 <div className="title-block">
                     <p id="CNewTitle" className="title-name"> {__title} </p>
@@ -522,7 +564,7 @@ class LK extends Component {
                                 let __emptyCheck = (keys) => {
                                     let __what = true;
                                     keys.forEach(key => {
-                                        if (document.getElementById(key).value == '') {
+                                        if (document.getElementById(key).value === '') {
                                             __what = false;
                                             document.getElementById(key).style.backgroundColor = 'rgba(255, 0, 0, .1)';
                                         } else 
@@ -545,8 +587,8 @@ class LK extends Component {
                                             let __originalData = this.state.currCP.data;
                                             
                                             Object.keys(__originalData).map(key => {
-                                                if (__currData[key] != __originalData[key] && key !== 'photo' && key !== 'id') 
-                                                    if (key == 'type' || key == 'branch') __query[key] = +__currData[key] + 1;
+                                                if (__currData[key] !== __originalData[key] && key !== 'photo' && key !== 'id') 
+                                                    if (key === 'type' || key === 'branch') __query[key] = +__currData[key] + 1;
                                                     else __query[key] = __currData[key];
                                             });
                                             if (__query !== {}) 
@@ -558,7 +600,7 @@ class LK extends Component {
                                                 });
                                         } else if (this.state.currCP.action === 0) { // create
                                             Object.keys(__currData).map(key => {
-                                                if (key == 'type' || key == 'branch') __query[key] = +__currData[key] + 1;
+                                                if (key === 'type' || key === 'branch') __query[key] = +__currData[key] + 1;
                                                 else if (key !== 'photo') __query[key] = __currData[key];
                                             });
                                             uploadFiles("createUser", {token: getToken(), keys: __query}, [__currData.photo ? __currData.photo : undefined]).then( res => {
@@ -654,6 +696,8 @@ class LK extends Component {
                     {__imageInput}
                 </div>
             </div>
+            {this.state.blocks.searchBox}
+            </>
         );
 
         this.setBlocks({createNewPanel: __newCP}, () => {
@@ -685,8 +729,8 @@ class LK extends Component {
                             <img className='user-picture' src={this.state.me.photo} alt='' />
                         </div>
                         <div id='UserHeaderMore' className='user-header-more'>
-                            <a className='button-profile'> Профиль </a>
-                            <a className='button-logout' onClick={() => this.logOut()} > Выйти </a>
+                            <p className='button-profile'> Профиль </p>
+                            <p className='button-logout' onClick={() => this.logOut()} > Выйти </p>
                         </div>
                     </li>
                 </ul>

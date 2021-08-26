@@ -152,7 +152,7 @@ function updateUserInfo($conn, $data, $files) {
                 $files["files"]['tmp_name'][0], 
                 $_SERVER['DOCUMENT_ROOT'] . "/profilepictures/{$randname}.{$ext}"
             );
-            unlink( $_SERVER['DOCUMENT_ROOT'] . "/profilepictures/{$photo}");
+            if ($photo != '0.png') unlink( $_SERVER['DOCUMENT_ROOT'] . "/profilepictures/{$photo}");
             $counter += 1;
         }
         if ($query != "" and mysqli_query($conn, "UPDATE `users` SET {$query} WHERE `users`.`id` = {$data["id"]}"))
@@ -162,7 +162,6 @@ function updateUserInfo($conn, $data, $files) {
 }
 
 function createUser($conn, $data, $files) {
-    //global $permissions;
     $__data = array(
         "success" => false
     );
@@ -211,33 +210,4 @@ function createUser($conn, $data, $files) {
 
     return $__data;
 }
-
-/*$query = array(
-        'name' => NULL,
-        'fio' => NULL,
-        'type' => NULL,
-        'bdate' => NULL,
-        'photo' => NULL
-    );
-    $keys = $data["keys"];
-    $randname = transliterate(str_replace(' ', '-', $keys["fio"])).'-'.generateRandomString(5);
-    $ext = preg_replace("/(.*)\/(?:)/", '', $files['files']['type'][0]);
-    if (isAllowed($conn, $data["token"], $permissions["createUser"])) {
-        $counter = 1;
-        $total = count($keys);
-        foreach ($keys as $key => $value) {
-            $query[$key] = $value;
-        }
-        if (array_key_exists("files", $files)) {
-            $query['photo'] = "{$randname}.{$ext}";
-            move_uploaded_file(
-                $files["files"]['tmp_name'][0], 
-                $_SERVER['DOCUMENT_ROOT'] . "/profilepictures/{$randname}.{$ext}"
-            );
-        } else {
-            $query['photo'] = '0.png';
-        }
-        if ($query != "" and mysqli_query($conn, "INSERT INTO `users`(`name`, `fio`, `type`, `bdate`, `branch`, `photo`) VALUES (\"{$query['name']}\", \"{$query['fio']}\", \"{$query['type']}\", \"{$query['bdate']}\", \"{$query['branch']}\", \"{$query['photo']}\")"))
-            $__data["success"] = true;
-    }*/
 ?>

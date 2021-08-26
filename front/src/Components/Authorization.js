@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import {request, uploadFiles, getToken} from './requests';
+import {request} from './requests';
 
 class Authorization extends Component {
     constructor(props) {
@@ -63,7 +63,7 @@ class Authorization extends Component {
             login: document.getElementById("Login").value,
             password: document.getElementById("Password").value
         }
-        if (data.fio != '' && (data.login == '' || data.password == '')) {
+        if (data.fio !== '' && (data.login === '' || data.password === '')) {
             this.setState({regData: {name: data.fio}});
             request("isNewUserByFio", {fio: data.fio}).then(res => {
                 if (res.success) {
@@ -120,8 +120,8 @@ class Authorization extends Component {
                     <ul className="main-ul">
                         <li id="Logo"><img src="Sources/images/logo.png" alt=""/></li>
                         <li id="Auth">
-                            <a className="button button-login" onClick={() => this.setState({ currAction: true }) }>Войти</a>
-                            <a className="button button-register" onClick={() => this.setState({ currAction: false }) }>Регистрация</a>
+                            <p className="button button-login" onClick={() => this.setState({ currAction: true }) }>Войти</p>
+                            <p className="button button-register" onClick={() => this.setState({ currAction: false }) }>Регистрация</p>
                             <div className="selection-shadow"></div>
                         </li>
                     </ul>

@@ -4,56 +4,6 @@ require_once 'users.php';
 require_once 'features.php';
 require_once 'globals.php';
 
-/*function sortingHat($conn, $r) {
-    switch ($r["method"]) {
-        case "login":
-            return login($conn, $r["data"]);
-        case "register":
-            return register($conn, $r["data"]);
-        case "getUser":
-            return getUser($conn, $r["data"]);
-        case "getUsers":
-            return getUsers($conn, $r["data"]);
-        case "isUser":
-            return isUser($conn, $r["data"]);
-        case "getUserName":
-            return getUserName($conn, $r["data"]);
-        case "getUserType":
-            return getUserType($conn, $r["data"]);
-        case "getUserInfo":
-            return getUserInfo($conn, $r["data"]);
-        case "getEmployees":
-            return getEmployees($conn, $r["data"]);
-        case "getListOf":
-            return getListOf($conn, $r["data"]);
-        case "getTypes":
-            return getTypes($conn, $r["data"]);
-        case "updateUserInfo":
-            return updateUserInfo($conn, $r["data"], $r["files"]);
-        case "createUser":
-            return createUser($conn, $r["data"], $r["files"]);
-        case "isNewUserByFio":
-            return isNewUserByFio($conn, $r["data"]);
-        case "getCategories":
-            return getCategories($conn, $r["data"]);
-        case "createClient":
-            return createClient($conn, $r["data"]);
-        case "updateClient":
-            return updateClient($conn, $r["data"]);
-        case "createBranch":
-            return createBranch($conn, $r["data"]);
-        case "updateBranch":
-            return updateBranch($conn, $r["data"]);
-        case "getBranches":
-            return getBranches($conn, $r["data"]);
-        default:
-            return array(
-                "success" => false,
-                "error" => "Wrong method"
-            );
-    }
-}*/
-
 function sortingHat($conn, $method, $data, $files=array()) {
     switch ($method) {
         case "login":
